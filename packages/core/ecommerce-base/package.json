@@ -1,0 +1,84 @@
+{
+  "name": "@strapi/ecommerce-base",
+  "version": "5.52.0",
+  "description": "Strapi core plugin providing a generic, reusable e-commerce base system: product catalog, inventory, orders, customers, carts, promotions, payments and webhooks, with a native policy-based access control (PBAC) layer.",
+  "keywords": [
+    "strapi",
+    "plugin",
+    "ecommerce",
+    "retail",
+    "pbac",
+    "permissions"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Paradox Tech BD",
+    "email": "dev@paradox-tech.bd",
+    "url": "https://github.com/Paradox-Tech-BD"
+  },
+  "maintainers": [
+    {
+      "name": "Paradox Tech BD",
+      "email": "dev@paradox-tech.bd",
+      "url": "https://github.com/Paradox-Tech-BD"
+    }
+  ],
+  "exports": {
+    "./strapi-admin": {
+      "types": "./dist/admin/src/index.d.ts",
+      "source": "./admin/src/index.ts",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "types": "./dist/server/src/index.d.ts",
+      "source": "./server/src/index.ts",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "run -T npm-run-all clean --parallel build:code build:types",
+    "build:code": "run -T rollup -c",
+    "build:types": "run -T run-p build:types:server build:types:admin",
+    "build:types:server": "run -T tsc -p server/tsconfig.build.json --emitDeclarationOnly",
+    "build:types:admin": "run -T tsc -p admin/tsconfig.build.json --emitDeclarationOnly",
+    "clean": "run -T rimraf dist",
+    "lint": "run -T eslint . --max-warnings=0",
+    "test:unit": "run -T jest",
+    "test:ts:back": "run -T tsc -p server/tsconfig.json",
+    "test:ts:front": "run -T tsc -p admin/tsconfig.json",
+    "test:unit:watch": "run -T jest --watch",
+    "watch": "run -T rollup -c -w"
+  },
+  "dependencies": {
+    "@casl/ability": "6.7.3",
+    "@strapi/admin": "5.52.0",
+    "@strapi/design-system": "2.2.4",
+    "@strapi/icons": "2.2.4",
+    "@strapi/types": "5.52.0",
+    "@strapi/utils": "5.52.0",
+    "lodash": "4.17.21",
+    "zod": "3.24.4"
+  },
+  "peerDependencies": {
+    "@strapi/strapi": "^5.0.0"
+  },
+  "strapi": {
+    "displayName": "E-commerce Base",
+    "name": "ecommerce-base",
+    "description": "Generic, reusable e-commerce base system with PBAC-style granular permissions.",
+    "required": true,
+    "kind": "plugin"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=26.x.x",
+    "npm": ">=6.0.0"
+  }
+}

@@ -118,6 +118,7 @@
     "@strapi/core": "5.52.0",
     "@strapi/data-transfer": "5.52.0",
     "@strapi/database": "5.52.0",
+    "@strapi/ecommerce-base": "5.52.0",
     "@strapi/email": "5.52.0",
     "@strapi/generators": "5.52.0",
     "@strapi/i18n": "5.52.0",

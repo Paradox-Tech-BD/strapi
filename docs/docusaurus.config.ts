@@ -35,6 +35,20 @@ const presetClassicOptions: Preset.Options = {
   blog: false,
 };
 
+/**
+ * E-commerce Base documentation — rendered under /ecommerce-base with its own
+ * sidebar (`ecommerceBase` in sidebars.ts).
+ */
+const ecommerceBaseDocsPlugin: Exclude<Config['plugins'][number], undefined> = [
+  '@docusaurus/plugin-content-docs',
+  {
+    id: 'ecommerce-base',
+    path: 'ecommerce-base',
+    routeBasePath: 'ecommerce-base',
+    sidebarPath: require.resolve('./sidebars.ts'),
+  },
+];
+
 const themeConfig: Preset.ThemeConfig = {
   navbar: {
     title: 'Contributor documentation',
@@ -110,6 +124,7 @@ const config: Config = {
     },
   },
   plugins: [
+    ecommerceBaseDocsPlugin,
     () => ({
       name: 'resolve-react',
       configureWebpack() {
