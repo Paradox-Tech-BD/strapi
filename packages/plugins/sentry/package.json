@@ -59,7 +59,7 @@
     "test:unit:vitest:watch": "vitest --watch"
   },
   "dependencies": {
-    "@sentry/node": "7.112.2",
+    "@sentry/node": "7.120.4",
     "@strapi/design-system": "2.2.4",
     "@strapi/icons": "2.2.4"
   },
