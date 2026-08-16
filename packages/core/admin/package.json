@@ -156,7 +156,7 @@
     "@types/invariant": "2.2.37",
     "@types/jest": "29.5.2",
     "@types/json-logic-js": "2.0.8",
-    "@types/jsonwebtoken": "9.0.3",
+    "@types/jsonwebtoken": "9.0.10",
     "@types/koa-passport": "6.0.1",
     "@types/lodash": "^4.14.191",
     "@types/markdown-it": "13.0.7",
