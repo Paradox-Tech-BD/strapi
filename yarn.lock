@@ -8656,7 +8656,7 @@ __metadata:
     "@types/invariant": "npm:2.2.37"
     "@types/jest": "npm:29.5.2"
     "@types/json-logic-js": "npm:2.0.8"
-    "@types/jsonwebtoken": "npm:9.0.3"
+    "@types/jsonwebtoken": "npm:9.0.10"
     "@types/koa-passport": "npm:6.0.1"
     "@types/lodash": "npm:^4.14.191"
     "@types/markdown-it": "npm:13.0.7"
@@ -11047,12 +11047,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:9.0.3":
-  version: 9.0.3
-  resolution: "@types/jsonwebtoken@npm:9.0.3"
+"@types/jsonwebtoken@npm:9.0.10":
+  version: 9.0.10
+  resolution: "@types/jsonwebtoken@npm:9.0.10"
   dependencies:
+    "@types/ms": "npm:*"
     "@types/node": "npm:*"
-  checksum: 10c0/b6f01b4c655a8d1563a1c05309fe195d2b625681bd096ebc1e609e1fd9a3973222981e4550660c7809e6e1166745357d812730a6620ad10e0b04fdc98edcf92f
+  checksum: 10c0/0688ac8fb75f809201cb7e18a12b9d80ce539cb9dd27e1b01e11807cb1a337059e899b8ee3abc3f2c9417f02e363a3069d9eab9ef9724b1da1f0e10713514f94
   languageName: node
   linkType: hard
 
