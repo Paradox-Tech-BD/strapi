@@ -8,6 +8,7 @@ import promotion from './promotion';
 import payment from './payment';
 import webhook from './webhook';
 import audit from './audit';
+import tax from './tax';
 import contentApiController from './content-api';
 
 export const controllers = {
@@ -21,5 +22,6 @@ export const controllers = {
   payment,
   webhook,
   audit,
+  tax,
   'content-api': contentApiController,
 };

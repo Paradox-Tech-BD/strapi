@@ -620,5 +620,84 @@ export const routes: Core.RouterConfig = {
         ],
       },
     },
+    // Tax rules
+    {
+      method: 'GET',
+      path: '/tax-rules',
+      handler: 'tax.find',
+      config: {
+        policies: [
+          'admin::isAuthenticatedAdmin',
+          {
+            name: 'admin::hasPermissions',
+            config: { actions: ['plugin::ecommerce-base.catalog.read'] },
+          },
+        ],
+      },
+    },
+    {
+      method: 'GET',
+      path: '/tax-rules/:id',
+      handler: 'tax.findOne',
+      config: {
+        policies: [
+          'admin::isAuthenticatedAdmin',
+          {
+            name: 'admin::hasPermissions',
+            config: { actions: ['plugin::ecommerce-base.catalog.read'] },
+          },
+        ],
+      },
+    },
+    {
+      method: 'POST',
+      path: '/tax-rules',
+      handler: 'tax.create',
+      config: {
+        policies: [
+          'admin::isAuthenticatedAdmin',
+          {
+            name: 'admin::hasPermissions',
+            config: { actions: ['plugin::ecommerce-base.catalog.manage'] },
+          },
+        ],
+      },
+    },
+    {
+      method: 'PUT',
+      path: '/tax-rules/:id',
+      handler: 'tax.update',
+      config: {
+        policies: [
+          'admin::isAuthenticatedAdmin',
+          {
+            name: 'admin::hasPermissions',
+            config: { actions: ['plugin::ecommerce-base.catalog.manage'] },
+          },
+        ],
+      },
+    },
+    {
+      method: 'DELETE',
+      path: '/tax-rules/:id',
+      handler: 'tax.delete',
+      config: {
+        policies: [
+          'admin::isAuthenticatedAdmin',
+          {
+            name: 'admin::hasPermissions',
+            config: { actions: ['plugin::ecommerce-base.catalog.manage'] },
+          },
+        ],
+      },
+    },
+    {
+      method: 'POST',
+      path: '/tax-rules/compute',
+      handler: 'tax.compute',
+      config: {
+        policies: ['admin::isAuthenticatedAdmin'],
+      },
+    },
   ],
 };

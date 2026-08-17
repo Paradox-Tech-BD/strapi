@@ -91,6 +91,47 @@ export const conditions = [
       return { 'customer.email': { $contains: '' } };
     },
   },
+  {
+    displayName: 'Is warehouse manager',
+    name: CONDITIONS.isWarehouseManager,
+    plugin: 'ecommerce-base',
+    handler: (user: User) => {
+      const roles = (user.roles ?? []) as Role[];
+      const isManager = roles.some(
+        (role) =>
+          role.code === 'inventory-manager' ||
+          String(role.name ?? '')
+            .toLowerCase()
+            .includes('warehouse')
+      );
+      if (!isManager) return { id: { $eq: -1 } };
+      return { warehouseLocation: { $notNull: true } };
+    },
+  },
+  {
+    displayName: 'Is recent-order manager',
+    name: CONDITIONS.isRecentOrderManager,
+    plugin: 'ecommerce-base',
+    handler: () => ({
+      createdAt: {
+        $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    }),
+  },
+  {
+    displayName: 'Is active-promotion manager',
+    name: CONDITIONS.isActivePromotionManager,
+    plugin: 'ecommerce-base',
+    handler: (user: User) => {
+      const roles = (user.roles ?? []) as Role[];
+      const isManager = roles.some((role) => role.code === 'catalog-manager');
+      if (!isManager) return { id: { $eq: -1 } };
+      return {
+        active: { $eq: true },
+        endsAt: { $gte: new Date().toISOString() },
+      };
+    },
+  },
 ];
 
 export async function register({ strapi }: { strapi: any }) {

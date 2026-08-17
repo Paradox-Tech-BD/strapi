@@ -1,4 +1,4 @@
-import { ShoppingCart, List, Shirt, PriceTag, PresentationChart } from '@strapi/icons';
+import { ShoppingCart, List, Shirt, PriceTag, PresentationChart, ChartPie } from '@strapi/icons';
 import pluginPkg from '../../package.json';
 import { PERMISSIONS } from './constants';
 import { pluginId } from './pluginId';
@@ -76,6 +76,20 @@ const admin: Plugin.Config.AdminInput = {
       Component: () =>
         import('./pages/AuditLogPage').then((mod) => ({ default: mod.AuditLogPage })),
       position: 5,
+    });
+
+    // Tax Rules
+    app.addMenuLink({
+      to: `plugins/${pluginId}/tax-rules`,
+      icon: ChartPie,
+      intlLabel: {
+        id: getTrad('plugin.taxRules'),
+        defaultMessage: 'Tax Rules',
+      },
+      permissions: [{ action: 'plugin::ecommerce-base.catalog.read', subject: null }],
+      Component: () =>
+        import('./pages/TaxRulesPage').then((mod) => ({ default: mod.TaxRulesPage })),
+      position: 6,
     });
 
     app.registerPlugin({

@@ -5935,6 +5935,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@paypal/checkout-server-sdk@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@paypal/checkout-server-sdk@npm:1.0.3"
+  dependencies:
+    "@paypal/paypalhttp": "npm:^1.0.1"
+  checksum: 10c0/b77273ee8ee7a6c9354b09cf12f36ecfe4a65009f2be508e2206f0ac83319f49300fc0a03d71ca8cb1a10065732c142615f6427b48dc392bffcefa57e7883c35
+  languageName: node
+  linkType: hard
+
+"@paypal/paypalhttp@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@paypal/paypalhttp@npm:1.0.1"
+  checksum: 10c0/1ce08dc24c5eb69d2e0fd5d8a847b61cac494343c24325194c288cb5a5c3c815164e28253f804693acb7dccc56cdca5ad11be398784e359d439d0deeb059a04a
+  languageName: node
+  linkType: hard
+
 "@pkgr/core@npm:^0.3.6":
   version: 0.3.6
   resolution: "@pkgr/core@npm:0.3.6"
@@ -9146,12 +9162,14 @@ __metadata:
   resolution: "@strapi/ecommerce-base@workspace:packages/core/ecommerce-base"
   dependencies:
     "@casl/ability": "npm:6.7.3"
+    "@paypal/checkout-server-sdk": "npm:1.0.3"
     "@strapi/admin": "npm:5.52.0"
     "@strapi/design-system": "npm:2.2.4"
     "@strapi/icons": "npm:2.2.4"
     "@strapi/types": "npm:5.52.0"
     "@strapi/utils": "npm:5.52.0"
     lodash: "npm:4.17.21"
+    stripe: "npm:22.5.0"
     zod: "npm:3.24.4"
   peerDependencies:
     "@strapi/strapi": ^5.0.0
@@ -28344,6 +28362,18 @@ __metadata:
   version: 2.0.1
   resolution: "strip-json-comments@npm:2.0.1"
   checksum: 10c0/b509231cbdee45064ff4f9fd73609e2bcc4e84a4d508e9dd0f31f70356473fde18abfb5838c17d56fb236f5a06b102ef115438de0600b749e818a35fbbc48c43
+  languageName: node
+  linkType: hard
+
+"stripe@npm:22.5.0":
+  version: 22.5.0
+  resolution: "stripe@npm:22.5.0"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/c70e25a409edea80a907c62fdcc9467d568a3dac2f91ec0b14c272b40f26b11f6794b04f915d25df25a9635815a717bdc2226797b212f1f33f53cff4317394b3
   languageName: node
   linkType: hard
 

@@ -7,6 +7,7 @@ import promotion from './promotion';
 import payment from './payment';
 import webhook from './webhook';
 import audit from './audit';
+import tax from './tax';
 
 export const services = {
   product,
@@ -18,4 +19,5 @@ export const services = {
   payment,
   webhook,
   audit,
+  tax,
 };

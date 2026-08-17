@@ -26,6 +26,7 @@ describe('ecommerce-base order service', () => {
   let inventoryMock: Record<string, jest.Mock>;
   let promotionMock: Record<string, jest.Mock>;
   let customerMock: Record<string, jest.Mock>;
+  let taxMock: Record<string, jest.Mock>;
   let eventEmitted: { event: string; payload: unknown } | null = null;
 
   beforeEach(() => {
@@ -52,10 +53,14 @@ describe('ecommerce-base order service', () => {
     customerMock = {
       recordOrder: jest.fn(async () => ({})),
     };
+    taxMock = {
+      compute: jest.fn(async () => ({ taxAmount: 0, effectiveRate: 0, rules: [] })),
+    };
     mountServices(ctx, {
       inventory: inventoryMock,
       promotion: promotionMock,
       customer: customerMock,
+      tax: taxMock,
     });
 
     order = orderFactory({ strapi: ctx.strapi });
@@ -159,6 +164,29 @@ describe('ecommerce-base order service', () => {
     it('records the order on the linked customer when customerId is given', async () => {
       await order.create({ customerId: 7, items: [{ productId: 1, quantity: 1, unitPrice: 5 }] });
       expect(customerMock.recordOrder).toHaveBeenCalledWith(7, expect.any(Number));
+    });
+
+    it('computes regional tax after discounts and includes it in the total', async () => {
+      (taxMock.compute as jest.Mock).mockResolvedValue({
+        taxAmount: 15,
+        effectiveRate: 0.15,
+        rules: [{ id: 4, name: 'BD VAT', region: 'BD', rate: 0.15, type: 'exclusive' }],
+      });
+
+      const created = await order.create({
+        items: [{ productId: 1, quantity: 1, unitPrice: 100 }],
+        shippingCost: 5,
+        region: 'BD',
+      });
+
+      expect(taxMock.compute).toHaveBeenCalledWith(100, 'BD');
+      expect(Number(created.taxAmount)).toBe(15);
+      expect(Number(created.total)).toBe(120);
+      expect(created.metadata).toEqual(
+        expect.objectContaining({
+          tax: expect.objectContaining({ region: 'BD', taxAmount: 15, effectiveRate: 0.15 }),
+        })
+      );
     });
   });
 

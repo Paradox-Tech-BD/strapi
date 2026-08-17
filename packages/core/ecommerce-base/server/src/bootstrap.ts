@@ -1,5 +1,6 @@
 import type { Core } from '@strapi/types';
 import { ACTIONS, STAFF_ROLES, WEBHOOK_EVENTS } from './constants';
+import { createPayPalGateway, createStripeGateway } from './gateways';
 
 const ADMIN_ACTIONS = [
   {
@@ -169,7 +170,28 @@ export async function bootstrap({ strapi }: { strapi: Core.Strapi }) {
     value: { ...storeDefaults, ...(existing ?? {}) },
   });
 
-  // 4. Register the recurring cron that marks abandoned carts.
+  // 4. Register optional payment gateways when their credentials are configured.
+  try {
+    const paymentService = strapi.plugin('ecommerce-base').service('payment');
+    if (process.env.STRIPE_SECRET_KEY) {
+      paymentService.registerGateway(createStripeGateway(process.env.STRIPE_SECRET_KEY));
+    } else {
+      strapi.log?.warn?.('[ecommerce-base] STRIPE_SECRET_KEY is not set; Stripe gateway skipped');
+    }
+    if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
+      paymentService.registerGateway(
+        createPayPalGateway(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET)
+      );
+    } else {
+      strapi.log?.warn?.('[ecommerce-base] PayPal credentials are not set; PayPal gateway skipped');
+    }
+  } catch (error) {
+    strapi.log?.warn?.(
+      `[ecommerce-base] optional payment gateway registration failed: ${(error as Error).message}`
+    );
+  }
+
+  // 5. Register the recurring cron that marks abandoned carts.
   strapi.cron.add({
     'ecommerce-abandon-carts': {
       task: async () => {

@@ -6,6 +6,7 @@ import customer from './customer';
 import cart from './cart';
 import cartItem from './cart-item';
 import promotion from './promotion';
+import taxRule from './tax-rule';
 
 export const contentTypes = {
   product,
@@ -16,4 +17,5 @@ export const contentTypes = {
   cart,
   'cart-item': cartItem,
   promotion,
+  'tax-rule': taxRule,
 };

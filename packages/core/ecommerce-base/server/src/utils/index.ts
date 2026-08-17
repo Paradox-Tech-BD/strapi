@@ -7,6 +7,7 @@ import type promotion from '../services/promotion';
 import type payment from '../services/payment';
 import type webhook from '../services/webhook';
 import type audit from '../services/audit';
+import type tax from '../services/tax';
 
 type Services = {
   product: ReturnType<typeof product>;
@@ -18,6 +19,7 @@ type Services = {
   payment: ReturnType<typeof payment>;
   webhook: ReturnType<typeof webhook>;
   audit: ReturnType<typeof audit>;
+  tax: ReturnType<typeof tax>;
 };
 
 export const getService = <TName extends keyof Services>(name: TName): Services[TName] => {

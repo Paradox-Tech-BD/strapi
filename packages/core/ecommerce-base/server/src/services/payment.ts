@@ -13,11 +13,13 @@ export interface PaymentGateway {
     orderId: string;
     metadata?: Record<string, unknown>;
   }): Promise<{ success: boolean; reference?: string; error?: string }>;
-  capture(params: { reference: string }): Promise<{ success: boolean; reference?: string }>;
+  capture(params: {
+    reference: string;
+  }): Promise<{ success: boolean; reference?: string; error?: string }>;
   refund(params: {
     reference: string;
     amount: number;
-  }): Promise<{ success: boolean; reference?: string }>;
+  }): Promise<{ success: boolean; reference?: string; error?: string }>;
 }
 
 /**

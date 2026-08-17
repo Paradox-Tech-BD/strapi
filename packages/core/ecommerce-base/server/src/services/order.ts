@@ -98,6 +98,8 @@ export default ({ strapi }: { strapi: any }) => ({
     paymentMethod,
     shippingCost,
     taxRate,
+    region,
+    metadata,
     notes,
   }: {
     customerId?: number | string;
@@ -108,6 +110,8 @@ export default ({ strapi }: { strapi: any }) => ({
     paymentMethod?: string;
     shippingCost?: number;
     taxRate?: number;
+    region?: string;
+    metadata?: Record<string, unknown>;
     notes?: string;
   }) {
     if (!items.length) throw new ValidationError('An order needs at least one line item.');
@@ -158,12 +162,25 @@ export default ({ strapi }: { strapi: any }) => ({
       }
     }
 
+    // Tax is resolved through the native tax service after subtotal and discount
+    // are known. The legacy taxRate input remains accepted for compatibility,
+    // but regional tax rules are authoritative when the service is available.
     const totals = await this.computeTotals({
       lines,
       promotion,
       shippingCost,
-      taxRate,
+      taxRate: 0,
     });
+    const taxResult = await getService('tax').compute(
+      totals.subtotal - totals.discountAmount,
+      region ?? 'default'
+    );
+    const taxAmount = roundMoney(Number(taxResult.taxAmount));
+    const finalTotals = {
+      ...totals,
+      taxAmount,
+      total: roundMoney(totals.subtotal - totals.discountAmount + taxAmount + (shippingCost ?? 0)),
+    };
 
     const order = await strapi.db.query(ORDER_MODEL_UID).create({
       data: {
@@ -176,7 +193,16 @@ export default ({ strapi }: { strapi: any }) => ({
         shippingAddress: shippingAddress ?? null,
         billingAddress: billingAddress ?? null,
         notes: notes ?? null,
-        ...totals,
+        ...finalTotals,
+        metadata: {
+          ...(metadata ?? {}),
+          tax: {
+            region: region ?? 'default',
+            taxAmount,
+            effectiveRate: taxResult.effectiveRate,
+            rules: taxResult.rules,
+          },
+        },
       },
     });
 
@@ -195,7 +221,7 @@ export default ({ strapi }: { strapi: any }) => ({
     await this.emitEvent(WEBHOOK_EVENTS.orderCreated, { order: withLines });
 
     if (customerId) {
-      await (getService('customer') as any).recordOrder(customerId, totals.total);
+      await (getService('customer') as any).recordOrder(customerId, finalTotals.total);
     }
 
     return withLines;
