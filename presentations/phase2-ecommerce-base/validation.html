@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 314px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        padding: 58px 36px 20px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        letter-spacing: 1.8px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 44px;
+        letter-spacing: -1.8px;
+        line-height: 0.98;
+        margin-top: 18px;
+      }
+      .rail p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.5;
+        margin-top: 20px;
+      }
+      .rail-note {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 18px;
+        font-size: 13px;
+        line-height: 1.45;
+        font-weight: 300;
+      }
+      .main {
+        padding: 58px 64px 20px 54px;
+        display: flex;
+        flex-direction: column;
+      }
+      .top {
+        display: grid;
+        grid-template-columns: 310px 1fr;
+        column-gap: 50px;
+        align-items: end;
+      }
+      .score-label {
+        font-size: 13px;
+        color: #d95c14;
+        letter-spacing: 1.4px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .score {
+        font-size: 102px;
+        font-weight: 800;
+        letter-spacing: -5px;
+        line-height: 0.82;
+        margin-top: 14px;
+      }
+      .score span {
+        color: #d95c14;
+      }
+      .top h2 {
+        font-size: 36px;
+        line-height: 1.03;
+        letter-spacing: -1.3px;
+        max-width: 520px;
+      }
+      .top p {
+        font-size: 17px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 13px;
+        max-width: 560px;
+      }
+      .matrix {
+        margin-top: 20px;
+        border-top: 1px solid #b9b8d2;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 52px;
+      }
+      .column {
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+      }
+      .check {
+        min-height: 94px;
+        border-bottom: 1px solid #c9c8de;
+        display: grid;
+        grid-template-columns: 26px 1fr auto;
+        align-items: center;
+        column-gap: 12px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        background: #d95c14;
+        border-radius: 50%;
+      }
+      .check-title {
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.18;
+      }
+      .check-detail {
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 1.35;
+        margin-top: 5px;
+      }
+      .result {
+        color: #d95c14;
+        font-size: 16px;
+        font-weight: 800;
+        text-align: right;
+      }
+      .footer {
+        margin-top: 12px;
+        border-top: 1px solid #b9b8d2;
+        padding-top: 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 45px;
+      }
+      .footer strong {
+        font-size: 13px;
+        letter-spacing: 1px;
+        color: #d95c14;
+        text-transform: uppercase;
+      }
+      .footer p {
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 300;
+        margin-top: 7px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">08 / Evidence</div>
+          <h1>Validation results</h1>
+          <p>
+            Phase 2 was not treated as complete until the native plugin compiled, typed, tested,
+            rendered, and pushed successfully.
+          </p>
+        </div>
+        <div class="rail-note">
+          Scope: multi-currency tax, dynamic exemptions, customer/checkout APIs, Tax Rules UI, E2E
+          app composition, and Strapi 5 compatibility fixes.
+        </div>
+      </aside>
+      <main class="main">
+        <section class="top">
+          <div>
+            <div class="score-label">Quality gates passed</div>
+            <div class="score">5<span>/5</span></div>
+          </div>
+          <div>
+            <div class="eyebrow">Deterministic completion evidence</div>
+            <h2>Every relevant gate passed after the final implementation changes.</h2>
+            <p>
+              The result combines plugin-level correctness, TypeScript safety, administrative UI
+              behavior, generated-app wiring, and remote branch synchronization.
+            </p>
+          </div>
+        </section>
+        <section class="matrix" aria-label="Phase 2 validation evidence">
+          <div class="column">
+            <div class="check">
+              <span class="dot"></span>
+              <div>
+                <div class="check-title">Unit test suite</div>
+                <div class="check-detail">
+                  Tax conversion, exemption matching, order currency conversion, gateways, PBAC, and
+                  controller behavior.
+                </div>
+              </div>
+              <div class="result">81 passed</div>
+            </div>
+            <div class="check">
+              <span class="dot"></span>
+              <div>
+                <div class="check-title">Frontend TypeScript</div>
+                <div class="check-detail">
+                  Tax Rules page, translations, Design System v2 components, and admin plugin entry.
+                </div>
+              </div>
+              <div class="result">Passed</div>
+            </div>
+            <div class="check">
+              <span class="dot"></span>
+              <div>
+                <div class="check-title">Backend TypeScript</div>
+                <div class="check-detail">
+                  Currency-aware tax/order/cart/customer contracts, content API, schemas, and
+                  permissions.
+                </div>
+              </div>
+              <div class="result">Passed</div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="check">
+              <span class="dot"></span>
+              <div>
+                <div class="check-title">Plugin build</div>
+                <div class="check-detail">
+                  Rollup server and admin bundles plus generated declaration outputs completed
+                  cleanly.
+                </div>
+              </div>
+              <div class="result">Passed</div>
+            </div>
+            <div class="check">
+              <span class="dot"></span>
+              <div>
+                <div class="check-title">Playwright administration flow</div>
+                <div class="check-detail">
+                  Empty state; create/list BDT VAT rule; delete after confirmation.
+                </div>
+              </div>
+              <div class="result">3/3 passed</div>
+            </div>
+            <div class="check">
+              <span class="dot"></span>
+              <div>
+                <div class="check-title">Git delivery</div>
+                <div class="check-detail">
+                  Commit <b>3ddd016</b> verified locally and against <b>origin/main</b>.
+                </div>
+              </div>
+              <div class="result">Synchronized</div>
+            </div>
+          </div>
+        </section>
+        <section class="footer">
+          <div>
+            <strong>Final focused E2E command</strong>
+            <p>
+              <b
+                >yarn test:e2e:ce --setup --domains=admin -- ecommerce-tax-rules.spec.ts
+                --project=chromium --reporter=line</b
+              >
+            </p>
+          </div>
+          <div>
+            <strong>Resulting confidence</strong>
+            <p>
+              The Tax Rules page is backed by the server plugin in a regenerated Strapi application,
+              not merely rendered in an isolated frontend test.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

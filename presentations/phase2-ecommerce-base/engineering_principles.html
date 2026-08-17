@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 332px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        padding: 60px 30px 22px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 42px;
+        line-height: 0.98;
+        letter-spacing: -1.8px;
+        margin-top: 19px;
+      }
+      .rail p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.53;
+        margin-top: 16px;
+      }
+      .rail-foot {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 10px;
+      }
+      .rail-foot strong {
+        color: #d95c14;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+      }
+      .rail-foot span {
+        display: block;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.44;
+        margin-top: 8px;
+      }
+      .main {
+        padding: 60px 46px 22px 42px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .main h2 {
+        max-width: 740px;
+        font-size: 38px;
+        letter-spacing: -1.4px;
+        line-height: 1.02;
+        margin-top: 11px;
+      }
+      .intro {
+        max-width: 770px;
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 10px;
+      }
+      .principles {
+        margin-top: 10px;
+        border-top: 1px solid #b9b8d2;
+      }
+      .principle {
+        display: grid;
+        grid-template-columns: 36px 220px 1fr;
+        column-gap: 12px;
+        min-height: 48px;
+        align-items: center;
+        border-top: 1px solid #c9c8de;
+        padding: 6px 0;
+      }
+      .principle:first-child {
+        border-top: 0;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #d95c14;
+      }
+      .principle h3 {
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      .principle p {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.4;
+      }
+      .decision {
+        margin-top: 12px;
+        border-top: 3px solid #d95c14;
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        column-gap: 20px;
+        padding-top: 12px;
+      }
+      .decision strong {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+      }
+      .decision p {
+        font-size: 19px;
+        font-weight: 800;
+        line-height: 1.3;
+        max-width: 625px;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 300;
+        margin-top: 8px;
+      }
+      .footer b {
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">10 / Close</div>
+          <h1>Engineering principles and next decision</h1>
+          <p>
+            Phase 2 succeeded by extending native Strapi boundaries rather than introducing a
+            parallel commerce platform.
+          </p>
+        </div>
+        <div class="rail-foot">
+          <strong>Decision frame</strong
+          ><span
+            >Preserve the validated checkout calculation as the system of record; harden its
+            contract before expanding administrative and provider-specific surfaces.</span
+          >
+        </div>
+      </aside>
+      <main class="main">
+        <div>
+          <div class="eyebrow">What carries forward</div>
+          <h2>
+            Extend safely, keep the domain native, and prove behavior in a generated Strapi
+            application.
+          </h2>
+          <p class="intro">
+            The following principles are the operating model for Phase 3 and future commerce work in
+            this fork.
+          </p>
+          <section class="principles" aria-label="Engineering principles">
+            <div class="principle">
+              <span class="dot"></span>
+              <h3>Keep domain logic native.</h3>
+              <p>
+                Place content types, services, controllers, routes, and lifecycle behavior inside
+                the core ecommerce plugin; keep storefront-specific policies in dependent
+                application extensions.
+              </p>
+            </div>
+            <div class="principle">
+              <span class="dot"></span>
+              <h3>Register permissions server-side first.</h3>
+              <p>
+                Define valid actions before menu links, pages, and routes rely on them; generated
+                apps must install and enable the server plugin explicitly.
+              </p>
+            </div>
+            <div class="principle">
+              <span class="dot"></span>
+              <h3>Honor Design System v2 contracts.</h3>
+              <p>
+                Use root imports, accessible roles, Field APIs, and Radix-compatible
+                compound-component composition rather than assuming legacy dialog behavior.
+              </p>
+            </div>
+            <div class="principle">
+              <span class="dot"></span>
+              <h3>Preserve compatibility deliberately.</h3>
+              <p>
+                Keep legacy service result shapes where existing callers depend on them, while
+                adding currency and exemption details only when checkout context is supplied.
+              </p>
+            </div>
+            <div class="principle">
+              <span class="dot"></span>
+              <h3>Prefer deterministic evidence.</h3>
+              <p>
+                Use unit, type, build, generated-app E2E, and provider-adapter contract tests; do
+                not make live Stripe or PayPal sandboxes a release gate.
+              </p>
+            </div>
+          </section>
+        </div>
+        <div>
+          <section class="decision">
+            <strong>Phase 3 start</strong>
+            <p>
+              Implement checkout input validation and cart/customer integration coverage first; then
+              introduce exemption operations and operational audit/callback seams.
+            </p>
+          </section>
+          <div class="footer">
+            <span>Native Strapi 5.52.0 fork · ecommerce-base</span
+            ><b>Phase 2 complete · Phase 3 ready</b>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

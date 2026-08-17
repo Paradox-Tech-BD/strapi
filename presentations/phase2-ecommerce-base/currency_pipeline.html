@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        padding: 54px 34px 42px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 40px;
+        line-height: 1;
+        letter-spacing: -1.7px;
+        margin-top: 20px;
+      }
+      .config {
+        border-top: 1px solid #b9b8d2;
+        margin-top: 34px;
+        padding-top: 16px;
+      }
+      .config-label {
+        color: #d95c14;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .code {
+        font-family: 'Courier New', monospace;
+        font-size: 15px;
+        line-height: 1.7;
+        margin-top: 12px;
+      }
+      .rail-foot {
+        font-size: 13px;
+        line-height: 1.45;
+        font-weight: 300;
+        border-top: 1px solid #b9b8d2;
+        padding-top: 18px;
+      }
+      .main {
+        padding: 56px 58px 40px 54px;
+        display: flex;
+        flex-direction: column;
+      }
+      .main h2 {
+        font-size: 36px;
+        letter-spacing: -1.2px;
+        line-height: 1.05;
+        max-width: 720px;
+      }
+      .main p {
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 13px;
+        max-width: 720px;
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin-top: 58px;
+        align-items: start;
+      }
+      .stage {
+        border-top: 3px solid #d95c14;
+        min-height: 202px;
+        padding-top: 16px;
+      }
+      .stage-index {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #d95c14;
+      }
+      .dot {
+        width: 13px;
+        height: 13px;
+        background: #d95c14;
+        border-radius: 50%;
+      }
+      .stage h3 {
+        font-size: 18px;
+        line-height: 1.05;
+        margin-top: 22px;
+        letter-spacing: -0.4px;
+      }
+      .stage p {
+        font-size: 13px;
+        line-height: 1.45;
+        margin-top: 10px;
+        max-width: 112px;
+      }
+      .legacy {
+        margin-top: 46px;
+        border-top: 1px solid #b9b8d2;
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        column-gap: 26px;
+        padding-top: 18px;
+      }
+      .legacy strong {
+        font-size: 14px;
+        color: #d95c14;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .legacy span {
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.45;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">03 / Computation</div>
+          <h1>Currency is part of the tax context.</h1>
+          <div class="config">
+            <div class="config-label">Phase 2 configuration</div>
+            <div class="code">
+              baseCurrency: 'USD'<br />supported: ['USD', 'BDT']<br />exchangeRates: { USD: 1,<br />&nbsp;&nbsp;BDT:
+              120 }
+            </div>
+          </div>
+        </div>
+        <div class="rail-foot">
+          The configured exchange rate establishes the contract: 1 USD converts to 120 BDT before
+          tax and totals are calculated.
+        </div>
+      </aside>
+      <main class="main">
+        <div class="eyebrow">Checkout calculation path</div>
+        <h2>Normalize once, calculate once, persist an auditable result.</h2>
+        <p>
+          Preview and create both resolve the same currency, promotion, tax-rule, and exemption
+          context so storefront estimates do not drift from the stored order.
+        </p>
+        <section class="flow" aria-label="Checkout and tax computation flow">
+          <div class="stage">
+            <div class="stage-index"><span class="dot"></span>01</div>
+            <h3>Normalize</h3>
+            <p>Resolve region and requested checkout currency.</p>
+          </div>
+          <div class="stage">
+            <div class="stage-index"><span class="dot"></span>02</div>
+            <h3>Validate</h3>
+            <p>Reject currencies outside the configured supported set.</p>
+          </div>
+          <div class="stage">
+            <div class="stage-index"><span class="dot"></span>03</div>
+            <h3>Convert</h3>
+            <p>Convert product or cart price snapshots into the checkout currency.</p>
+          </div>
+          <div class="stage">
+            <div class="stage-index"><span class="dot"></span>04</div>
+            <h3>Select</h3>
+            <p>Choose active rules for the requested region and currency.</p>
+          </div>
+          <div class="stage">
+            <div class="stage-index"><span class="dot"></span>05</div>
+            <h3>Exempt</h3>
+            <p>Match customer, tag, domain, code, subtotal, and time window.</p>
+          </div>
+          <div class="stage">
+            <div class="stage-index"><span class="dot"></span>06</div>
+            <h3>Persist</h3>
+            <p>Store calculated tax context under order metadata for audit.</p>
+          </div>
+        </section>
+        <div class="legacy">
+          <strong>Compatibility</strong
+          ><span
+            >Calls without currency context keep the legacy result shape:
+            <b>{ taxAmount, effectiveRate, rules }</b>. Context-aware calls add gross tax, exemption
+            information, net tax, and currency.</span
+          >
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

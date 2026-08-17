@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 318px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        padding: 56px 34px 24px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 39px;
+        line-height: 1;
+        letter-spacing: -1.7px;
+        margin-top: 20px;
+      }
+      .rail p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.52;
+        margin-top: 19px;
+      }
+      .rail-foot {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 18px;
+        font-size: 13px;
+        line-height: 1.48;
+        font-weight: 300;
+      }
+      .main {
+        padding: 56px 62px 20px 52px;
+      }
+      .main h2 {
+        font-size: 36px;
+        line-height: 1.04;
+        letter-spacing: -1.25px;
+        max-width: 760px;
+        margin-top: 11px;
+      }
+      .intro {
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1.46;
+        max-width: 780px;
+        margin-top: 15px;
+      }
+      .route-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 38px;
+        row-gap: 0;
+        margin-top: 38px;
+        border-top: 1px solid #b9b8d2;
+      }
+      .route {
+        min-height: 152px;
+        border-bottom: 1px solid #c7c6dd;
+        padding-top: 20px;
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        column-gap: 13px;
+      }
+      .route:nth-child(odd) {
+        border-right: 1px solid #c7c6dd;
+        padding-right: 28px;
+      }
+      .route:nth-child(even) {
+        padding-left: 4px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #d95c14;
+        margin-top: 4px;
+      }
+      .method {
+        color: #d95c14;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+      }
+      .path {
+        font-family: 'Courier New', monospace;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-top: 4px;
+      }
+      .route-copy {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.4;
+        margin-top: 10px;
+        max-width: 305px;
+      }
+      .auth {
+        display: inline-block;
+        border-top: 1px solid #d95c14;
+        color: #2c2c38;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.7px;
+        margin-top: 11px;
+        padding-top: 5px;
+        text-transform: uppercase;
+      }
+      .principle {
+        border-top: 1px solid #b9b8d2;
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        column-gap: 24px;
+        margin-top: 22px;
+        padding-top: 17px;
+      }
+      .principle strong {
+        color: #d95c14;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .principle span {
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.42;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">05 / Storefront contract</div>
+          <h1>Four routes.<br />One checkout truth.</h1>
+          <p>
+            Phase 2 exposes the currency and tax domain as a public checkout surface plus an
+            authenticated customer surface.
+          </p>
+        </div>
+        <div class="rail-foot">
+          Preview and persistence deliberately share the order-service calculation path, so the
+          price shown to the shopper is calculated with the same rules stored on the order.
+        </div>
+      </aside>
+      <main class="main">
+        <div class="eyebrow">Content API / ecommerce-base</div>
+        <h2>
+          A coherent contract for checkout estimates, order creation, and customer preferences.
+        </h2>
+        <p class="intro">
+          The API keeps tax, currency conversion, promotion handling, and exemption context inside
+          the native plugin while allowing a storefront to remain an independent application.
+        </p>
+        <section class="route-grid" aria-label="Checkout and customer endpoint contract">
+          <article class="route">
+            <span class="dot"></span>
+            <div>
+              <div class="method">POST · public content API</div>
+              <div class="path">/checkout/preview</div>
+              <p class="route-copy">
+                Returns converted item prices, promotion result, regional tax calculation, and
+                matched exemption context without persistence.
+              </p>
+              <span class="auth">Preflight calculation</span>
+            </div>
+          </article>
+          <article class="route">
+            <span class="dot"></span>
+            <div>
+              <div class="method">POST · public content API</div>
+              <div class="path">/checkout/orders</div>
+              <p class="route-copy">
+                Creates an order through the same calculation pipeline and persists the tax audit
+                payload in order metadata.
+              </p>
+              <span class="auth">Persisted checkout</span>
+            </div>
+          </article>
+          <article class="route">
+            <span class="dot"></span>
+            <div>
+              <div class="method">GET · authenticated user</div>
+              <div class="path">/customer/dashboard</div>
+              <p class="route-copy">
+                Returns the resolved customer profile, selected currency, lifetime summary, and
+                recent orders.
+              </p>
+              <span class="auth">Customer identity required</span>
+            </div>
+          </article>
+          <article class="route">
+            <span class="dot"></span>
+            <div>
+              <div class="method">PUT · authenticated user</div>
+              <div class="path">/customer/preferences</div>
+              <p class="route-copy">
+                Updates the preferred customer currency after validation against the supported
+                tax-currency configuration.
+              </p>
+              <span class="auth">Customer identity required</span>
+            </div>
+          </article>
+        </section>
+        <div class="principle">
+          <strong>Design principle</strong
+          ><span
+            >One order-service pipeline resolves product pricing, conversion, promotion, tax rules,
+            exemptions, totals, and order metadata. The preview endpoint does not create a competing
+            calculation implementation.</span
+          >
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

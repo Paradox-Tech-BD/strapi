@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 310px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2; /* keep top padding for title consistency */
+        padding: 56px 28px 8px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.7px;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 40px;
+        line-height: 0.98;
+        letter-spacing: -1.6px;
+        margin-top: 20px;
+      }
+      .rail p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.5;
+        margin-top: 12px;
+      }
+      .rail-foot {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 14px;
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 1.5;
+      }
+      .main {
+        padding: 24px 48px 8px 36px;
+      }
+      .main h2 {
+        font-size: 35px;
+        line-height: 1.04;
+        letter-spacing: -1.2px;
+        max-width: 760px;
+      }
+      .lede {
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 12px;
+        max-width: 720px;
+      }
+      .criteria {
+        margin-top: 18px;
+        border-top: 1px solid #b9b8d2;
+      }
+      .criteria-row {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        column-gap: 26px;
+        border-top: 1px solid #c9c8de;
+        min-height: 68px;
+        align-items: center;
+      }
+      .criteria-row:first-child {
+        border-top: 0;
+      }
+      .criteria-label {
+        color: #d95c14;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+      }
+      .criteria-text {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.4;
+      }
+      .criteria-text b {
+        font-weight: 800;
+      }
+      .decision {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        column-gap: 36px;
+        margin-top: 18px;
+        border-top: 1px solid #b9b8d2;
+        padding-top: 10px;
+      }
+      .decision h3 {
+        font-size: 18px;
+        line-height: 1.1;
+      }
+      .step {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-top: 8px;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.4;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #d95c14;
+        flex: 0 0 12px;
+        margin-top: 3px;
+      }
+      .audit {
+        border-left: 1px solid #b9b8d2;
+        padding-left: 20px;
+      }
+      .audit-line {
+        border-top: 1px solid #c9c8de;
+        margin-top: 8px;
+        padding-top: 6px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+      .audit-line strong {
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">04 / Rules engine</div>
+          <h1>Dynamic exemption model</h1>
+          <p>
+            Exemptions are persisted policy data, matched against checkout context at
+            tax-computation time.
+          </p>
+        </div>
+        <div class="rail-foot">
+          A matching exemption reduces gross tax. The selected rule is traceable alongside currency,
+          rate, and applied tax rules in the stored order.
+        </div>
+      </aside>
+      <main class="main">
+        <div class="eyebrow">Contextual, time-bound, auditable</div>
+        <h2>Only eligible rules compete; the highest matching percentage wins.</h2>
+        <p class="lede">
+          The new collection type supports broad regional relief, customer-specific policies, and
+          code-gated campaigns without hard-coding jurisdictional logic into checkout.
+        </p>
+        <section class="criteria" aria-label="Tax exemption matching criteria">
+          <div class="criteria-row">
+            <div class="criteria-label">Scope</div>
+            <div class="criteria-text">
+              <b>Active status, region, and currency</b> gate every rule before customer-level
+              conditions are evaluated.
+            </div>
+          </div>
+          <div class="criteria-row">
+            <div class="criteria-label">Customer fit</div>
+            <div class="criteria-text">
+              <b>Customer relation, customer tags, and email domains</b> optionally narrow
+              eligibility to the intended population.
+            </div>
+          </div>
+          <div class="criteria-row">
+            <div class="criteria-label">Commercial fit</div>
+            <div class="criteria-text">
+              <b>Minimum subtotal, exemption code, start date, end date, and percentage</b> express
+              campaign and statutory requirements.
+            </div>
+          </div>
+        </section>
+        <section class="decision" aria-label="Exemption decision and persisted audit output">
+          <div>
+            <div class="eyebrow">Selection sequence</div>
+            <h3>Five deterministic checks</h3>
+            <div class="step">
+              <span class="dot"></span
+              ><span>Reject inactive, region-mismatched, or currency-mismatched rules.</span>
+            </div>
+            <div class="step">
+              <span class="dot"></span
+              ><span>Validate identity, tag, and email-domain conditions when configured.</span>
+            </div>
+            <div class="step">
+              <span class="dot"></span><span>Apply subtotal and start/end-date limits.</span>
+            </div>
+            <div class="step">
+              <span class="dot"></span
+              ><span>Require a caller-supplied code when the rule defines one.</span>
+            </div>
+            <div class="step">
+              <span class="dot"></span
+              ><span>Sort valid matches by percentage and use the highest.</span>
+            </div>
+          </div>
+          <div class="audit">
+            <div class="eyebrow">Order metadata.tax</div>
+            <h3>Persisted audit trail</h3>
+            <div class="audit-line"><span>Currency</span><strong>USD or BDT</strong></div>
+            <div class="audit-line"><span>Gross tax</span><strong>pre-exemption</strong></div>
+            <div class="audit-line"><span>Exempt amount</span><strong>calculated</strong></div>
+            <div class="audit-line"><span>Effective rate</span><strong>net rate</strong></div>
+            <div class="audit-line">
+              <span>Matched exemption</span><strong>id, name, code, %</strong>
+            </div>
+            <div class="audit-line">
+              <span>Matched tax rules</span><strong>persisted list</strong>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

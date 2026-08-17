@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 58px 40px 48px 52px;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .rail-title {
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1.04;
+        margin-top: 18px;
+      }
+      .rail-copy {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.55;
+        margin-top: 20px;
+        max-width: 230px;
+      }
+      .meta {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 20px;
+      }
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        line-height: 1.8;
+      }
+      .meta-row strong {
+        font-weight: 800;
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 70px 74px 58px 66px;
+      }
+      .headline {
+        max-width: 760px;
+        font-size: 62px;
+        font-weight: 800;
+        letter-spacing: -2.8px;
+        line-height: 0.96;
+      }
+      .headline span {
+        color: #d95c14;
+      }
+      .lede {
+        max-width: 690px;
+        font-size: 22px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 26px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid #b9b8d2;
+      }
+      .metric {
+        min-height: 180px;
+        border-right: 1px solid #b9b8d2;
+        padding: 28px 20px 0 0;
+        margin-right: 20px;
+      }
+      .metric:last-child {
+        border-right: 0;
+        margin-right: 0;
+      }
+      .marker {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #d95c14;
+        margin-bottom: 18px;
+      }
+      .metric-number {
+        font-size: 42px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+      }
+      .metric-label {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.35;
+        margin-top: 9px;
+        max-width: 125px;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 300;
+        margin-top: 26px;
+      }
+      .footer strong {
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">Engineering report</div>
+          <div class="rail-title">PHASE<br />02</div>
+          <p class="rail-copy">
+            Native Strapi commerce capability, extended for currency-aware checkout and regional tax
+            operations.
+          </p>
+        </div>
+        <div class="meta">
+          <div class="meta-row"><span>Repository</span><strong>strapi</strong></div>
+          <div class="meta-row"><span>Branch</span><strong>main</strong></div>
+          <div class="meta-row"><span>Commit</span><strong>3ddd016</strong></div>
+          <div class="meta-row"><span>Baseline</span><strong>5.52.0</strong></div>
+        </div>
+      </aside>
+      <main class="main">
+        <div>
+          <div class="eyebrow">Native @strapi/ecommerce-base</div>
+          <h1 class="headline">Multi-currency checkout<br />and <span>tax operations.</span></h1>
+          <p class="lede">
+            Phase 2 introduced BDT support, dynamic exemptions, customer currency preferences,
+            checkout preview and order APIs, and a tested Tax Rules administration workflow.
+          </p>
+        </div>
+        <div>
+          <section class="metrics" aria-label="Validation metrics">
+            <div class="metric">
+              <div class="marker"></div>
+              <div class="metric-number">81</div>
+              <div class="metric-label">ecommerce-base unit tests passed</div>
+            </div>
+            <div class="metric">
+              <div class="marker"></div>
+              <div class="metric-number">3/3</div>
+              <div class="metric-label">Tax Rules Playwright workflows passed</div>
+            </div>
+            <div class="metric">
+              <div class="marker"></div>
+              <div class="metric-number">2</div>
+              <div class="metric-label">TypeScript targets validated: frontend and backend</div>
+            </div>
+            <div class="metric">
+              <div class="marker"></div>
+              <div class="metric-number">1</div>
+              <div class="metric-label">native plugin build completed successfully</div>
+            </div>
+          </section>
+          <div class="footer">
+            <span>Paradox-Tech-BD/strapi</span><strong>Implementation & validation summary</strong>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

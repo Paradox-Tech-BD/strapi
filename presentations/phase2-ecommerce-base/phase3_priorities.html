@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 318px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        padding: 56px 36px 42px 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 43px;
+        line-height: 0.97;
+        letter-spacing: -1.8px;
+        margin-top: 19px;
+      }
+      .rail p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.4;
+        margin-top: 12px;
+      }
+      .rail-foot {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 12px;
+      }
+      .rail-foot strong {
+        display: block;
+        color: #d95c14;
+        font-size: 12px;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+      }
+      .rail-foot span {
+        display: block;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.35;
+        margin-top: 8px;
+      }
+      .main {
+        padding: 56px 62px 20px 52px;
+      }
+      .main h2 {
+        max-width: 780px;
+        font-size: 36px;
+        letter-spacing: -1.3px;
+        line-height: 1.03;
+        margin-top: 10px;
+      }
+      .intro {
+        max-width: 800px;
+        font-size: 17px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 14px;
+      }
+      .roadmap {
+        margin-top: 18px;
+        border-top: 1px solid #b9b8d2;
+      }
+      .roadmap-head,
+      .lane {
+        display: grid;
+        grid-template-columns: 96px 230px 1fr;
+        column-gap: 24px;
+      }
+      .roadmap-head {
+        color: #d95c14;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .lane {
+        min-height: 56px;
+        border-top: 1px solid #c9c8de;
+        align-items: center;
+      }
+      .priority {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .marker {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid #d95c14;
+        color: #d95c14;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .p1 .marker {
+        background: #d95c14;
+        color: #ebebfa;
+      }
+      .lane-title {
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.15;
+      }
+      .lane-copy {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.2;
+      }
+      .order {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        column-gap: 22px;
+        margin-top: 12px;
+        border-top: 1px solid #b9b8d2;
+        padding-top: 10px;
+      }
+      .order strong {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .order span {
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.42;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">09 / Next execution</div>
+          <h1>Phase 3 priorities</h1>
+          <p>
+            Turn Phase 2 domain capability into a hardened, testable storefront contract before
+            expanding administration and operational surfaces.
+          </p>
+        </div>
+        <div class="rail-foot">
+          <strong>Sequencing rule</strong
+          ><span
+            >Stabilize shared checkout behavior first. Add operational and administrative surfaces
+            only after the contract is deterministic.</span
+          >
+        </div>
+      </aside>
+      <main class="main">
+        <div class="eyebrow">Production hardening and integration</div>
+        <h2>
+          Close the gap between new domain services and real storefront, operations, and deployment
+          flows.
+        </h2>
+        <p class="intro">
+          The roadmap prioritizes checkout correctness, cart/customer integration, and deterministic
+          tests. Live provider sandbox verification remains intentionally out of scope.
+        </p>
+        <section class="roadmap" aria-label="Phase 3 priority roadmap">
+          <div class="roadmap-head">
+            <span>Priority</span><span>Workstream</span><span>Technical objective</span>
+          </div>
+          <div class="lane p1">
+            <div class="priority"><span class="marker">P1</span><span>Now</span></div>
+            <div class="lane-title">Checkout contract hardening</div>
+            <div class="lane-copy">
+              Validate items, quantities, identifiers, region, currency, addresses, and error
+              responses.
+            </div>
+          </div>
+          <div class="lane p1">
+            <div class="priority"><span class="marker">P1</span><span>Now</span></div>
+            <div class="lane-title">Cart-to-checkout integration</div>
+            <div class="lane-copy">
+              Active-cart currency, price snapshots, idempotency, and tax metadata propagation.
+            </div>
+          </div>
+          <div class="lane p1">
+            <div class="priority"><span class="marker">P1</span><span>Now</span></div>
+            <div class="lane-title">Customer API coverage</div>
+            <div class="lane-copy">
+              User-to-customer resolution, preference updates, and absent-profile behavior.
+            </div>
+          </div>
+          <div class="lane">
+            <div class="priority"><span class="marker">P2</span><span>Next</span></div>
+            <div class="lane-title">Exemption operations</div>
+            <div class="lane-copy">
+              Permissioned admin workflow for exemption rules with percentage, code, and region
+              validation.
+            </div>
+          </div>
+          <div class="lane">
+            <div class="priority"><span class="marker">P3</span><span>Then</span></div>
+            <div class="lane-title">Observability and payment readiness</div>
+            <div class="lane-copy">
+              Tax metadata, audit signals, and provider-neutral callback/idempotency seams.
+            </div>
+          </div>
+        </section>
+        <div class="order">
+          <strong>Recommended order</strong
+          ><span
+            >Checkout validation → cart conversion tests → customer endpoint tests → exemption admin
+            → audit/callback seams.</span
+          >
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

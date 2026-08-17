@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      .slide-container {
+        width: 1280px;
+        min-height: 720px;
+        background: #ebebfa;
+        color: #2c2c38;
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .rail {
+        border-right: 1px solid #b9b8d2;
+        padding: 58px 34px 42px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+      }
+      .rail h1 {
+        font-size: 42px;
+        line-height: 0.98;
+        letter-spacing: -1.8px;
+        margin-top: 20px;
+      }
+      .rail p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.55;
+        margin-top: 20px;
+      }
+      .verdict {
+        border-top: 1px solid #b9b8d2;
+        padding-top: 18px;
+      }
+      .verdict-label {
+        color: #d95c14;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+      }
+      .verdict-copy {
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.35;
+        margin-top: 10px;
+      }
+      .main {
+        padding: 58px 66px 38px 54px;
+        display: flex;
+        flex-direction: column;
+      }
+      .main h2 {
+        font-size: 36px;
+        letter-spacing: -1.2px;
+        line-height: 1.04;
+        max-width: 760px;
+      }
+      .intro {
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1.45;
+        margin-top: 14px;
+        max-width: 780px;
+      }
+      .chain {
+        display: grid;
+        grid-template-columns: 1fr 52px 1fr 52px 1fr;
+        align-items: stretch;
+        margin-top: 44px;
+      }
+      .evidence {
+        border-top: 3px solid #d95c14;
+        padding-top: 16px;
+        min-height: 226px;
+      }
+      .evidence-number {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #d95c14;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1px;
+      }
+      .dot {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #d95c14;
+      }
+      .evidence h3 {
+        font-size: 21px;
+        line-height: 1.06;
+        letter-spacing: -0.5px;
+        margin-top: 23px;
+        max-width: 190px;
+      }
+      .evidence p {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.48;
+        margin-top: 12px;
+        max-width: 198px;
+      }
+      .connector {
+        position: relative;
+      }
+      .connector::before {
+        content: '';
+        position: absolute;
+        top: 48px;
+        left: 12px;
+        right: 12px;
+        border-top: 1px solid #b9b8d2;
+      }
+      .connector::after {
+        content: '→';
+        position: absolute;
+        top: 37px;
+        right: 6px;
+        color: #d95c14;
+        font-size: 22px;
+        font-weight: 800;
+      }
+      .contrast {
+        border-top: 1px solid #b9b8d2;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 38px;
+        margin-top: 26px;
+        padding-top: 18px;
+      }
+      .contrast-block {
+        display: grid;
+        grid-template-columns: 17px 1fr;
+        column-gap: 11px;
+      }
+      .contrast-block h4 {
+        font-size: 13px;
+        color: #d95c14;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .contrast-block p {
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 300;
+        margin-top: 6px;
+      }
+      .tiny-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #d95c14;
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-container">
+      <aside class="rail">
+        <div>
+          <div class="eyebrow">06 / Investigation</div>
+          <h1>It was not a page-rendering defect.</h1>
+          <p>
+            The browser could load Strapi admin, yet the ecommerce plugin’s server endpoint did not
+            exist in the generated test application.
+          </p>
+        </div>
+        <div class="verdict">
+          <div class="verdict-label">Root cause</div>
+          <div class="verdict-copy">Generated-app plugin composition was incomplete.</div>
+        </div>
+      </aside>
+      <main class="main">
+        <div class="eyebrow">Evidence chain</div>
+        <h2>The 404 identified a missing server plugin—not a broken Tax Rules component.</h2>
+        <p class="intro">
+          The diagnosis followed the request path from a visible admin shell to an unavailable
+          plugin API route, then back to the generated app template that determines installed and
+          enabled server plugins.
+        </p>
+        <section class="chain" aria-label="E2E diagnosis evidence chain">
+          <div class="evidence">
+            <div class="evidence-number"><span class="dot"></span>OBSERVED</div>
+            <h3>Admin shell loaded.</h3>
+            <p>
+              Strapi booted and served `/admin`, proving the E2E application and browser session
+              were functional.
+            </p>
+          </div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="evidence">
+            <div class="evidence-number"><span class="dot"></span>OBSERVED</div>
+            <h3>Tax Rules data request returned 404.</h3>
+            <p>`GET /ecommerce-base/tax-rules?page=1&pageSize=10` had no matching server route.</p>
+          </div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="evidence">
+            <div class="evidence-number"><span class="dot"></span>VERIFIED</div>
+            <h3>Generated app neither installed nor enabled the plugin.</h3>
+            <p>
+              `tests/app-template/config/plugins.js` was empty and the template dependency list
+              omitted `@strapi/ecommerce-base`.
+            </p>
+          </div>
+        </section>
+        <section class="contrast" aria-label="Architecture distinction">
+          <div class="contrast-block">
+            <span class="tiny-dot"></span>
+            <div>
+              <h4>Admin bundle registration</h4>
+              <p>
+                `packages/core/strapi/src/admin.ts` makes the UI plugin available to the core admin
+                bundle.
+              </p>
+            </div>
+          </div>
+          <div class="contrast-block">
+            <span class="tiny-dot"></span>
+            <div>
+              <h4>Generated-app server loading</h4>
+              <p>
+                The E2E application still needs the package dependency and explicit plugin
+                enablement to register routes, models, and lifecycle hooks.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

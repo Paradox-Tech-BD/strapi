@@ -20,6 +20,37 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   refunded: [],
 };
 
+function validateLineItems(
+  items: unknown,
+  targetCurrency: string,
+  isSupportedCurrency?: (currency: string) => boolean
+): asserts items is {
+  productId: number | string;
+  quantity: number;
+  unitPrice?: number;
+  currency?: string;
+}[] {
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new ValidationError('An order needs at least one line item.');
+  }
+  items.forEach((item, index) => {
+    const quantity = Number(item?.quantity);
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      throw new ValidationError(`items[${index}].quantity must be a positive integer.`);
+    }
+    const productId = Number(item?.productId);
+    if (!Number.isInteger(productId) || productId <= 0) {
+      throw new ValidationError(`items[${index}].productId must be a positive integer.`);
+    }
+    const itemCurrency = String(item?.currency ?? targetCurrency).toUpperCase();
+    if (isSupportedCurrency && !isSupportedCurrency(itemCurrency)) {
+      throw new ValidationError(
+        `Unsupported currency "${itemCurrency}" for items[${index}].currency.`
+      );
+    }
+  });
+}
+
 export default ({ strapi }: { strapi: any }) => ({
   async findPage(query: Record<string, unknown> = {}) {
     return strapi.db.query(ORDER_MODEL_UID).findPage({
@@ -112,7 +143,16 @@ export default ({ strapi }: { strapi: any }) => ({
     currency?: string;
     exemptionCode?: string;
   }) {
-    if (!items.length) throw new ValidationError('An order needs at least one line item.');
+    const taxService = getService('tax') as {
+      convert?: (
+        amount: number,
+        fromCurrency: string,
+        toCurrency: string
+      ) => { amount: number; rate: number };
+      isSupportedCurrency?: (currency: string) => boolean;
+    };
+    const targetCurrency = String(currency ?? 'USD').toUpperCase();
+    validateLineItems(items, targetCurrency, taxService.isSupportedCurrency);
     const productIds = items.map((item) => Number(item.productId));
     const products = (await strapi.db.query(PRODUCT_MODEL_UID).findMany({
       where: { id: { $in: productIds } },
@@ -128,14 +168,6 @@ export default ({ strapi }: { strapi: any }) => ({
     }
 
     const productById = new Map(products.map((product) => [product.id, product]));
-    const taxService = getService('tax') as {
-      convert?: (
-        amount: number,
-        fromCurrency: string,
-        toCurrency: string
-      ) => { amount: number; rate: number };
-    };
-    const targetCurrency = String(currency ?? 'USD').toUpperCase();
     const lines = items.map((item) => {
       const product = productById.get(Number(item.productId));
       if (!product) throw new ValidationError('One or more products could not be found.');
@@ -237,7 +269,16 @@ export default ({ strapi }: { strapi: any }) => ({
     metadata?: Record<string, unknown>;
     notes?: string;
   }) {
-    if (!items.length) throw new ValidationError('An order needs at least one line item.');
+    const taxService = getService('tax') as {
+      convert?: (
+        amount: number,
+        fromCurrency: string,
+        toCurrency: string
+      ) => { amount: number; rate: number };
+      isSupportedCurrency?: (currency: string) => boolean;
+    };
+    const targetCurrency = String(currency ?? 'USD').toUpperCase();
+    validateLineItems(items, targetCurrency, taxService.isSupportedCurrency);
 
     // Resolve products and current prices (price snapshot).
     const productIds = items.map((i) => Number(i.productId));
@@ -255,14 +296,6 @@ export default ({ strapi }: { strapi: any }) => ({
       throw new ValidationError('One or more products could not be found.');
     }
     const productById = new Map(products.map((p) => [p.id, p]));
-    const taxService = getService('tax') as {
-      convert?: (
-        amount: number,
-        fromCurrency: string,
-        toCurrency: string
-      ) => { amount: number; rate: number };
-    };
-    const targetCurrency = String(currency ?? 'USD').toUpperCase();
 
     const lines = items.map((item) => {
       const product = productById.get(Number(item.productId));

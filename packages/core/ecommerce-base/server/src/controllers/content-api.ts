@@ -1,5 +1,9 @@
+import { errors } from '@strapi/utils';
 import type { Context } from 'koa';
 import { getService } from '../utils';
+import { normalizeCheckoutInput } from '../utils/checkout';
+
+const { ApplicationError, ValidationError } = errors;
 
 async function resolveAuthenticatedCustomer(ctx: Context) {
   const userId = ctx.state.user?.id;
@@ -16,15 +20,16 @@ async function resolveAuthenticatedCustomer(ctx: Context) {
 }
 
 function checkoutInput(ctx: Context) {
-  const body = (ctx.request.body ?? {}) as Record<string, any>;
-  return {
-    items: Array.isArray(body.items) ? body.items : [],
-    promotionCode: body.promotionCode,
-    shippingCost: body.shippingCost,
-    region: body.region ?? body.shippingAddress?.region ?? 'default',
-    currency: body.currency,
-    exemptionCode: body.exemptionCode,
-  };
+  return normalizeCheckoutInput(ctx.request.body, (currency) =>
+    (getService('tax') as any).isSupportedCurrency(currency)
+  );
+}
+
+function handleCheckoutError(ctx: Context, error: unknown) {
+  if (error instanceof ValidationError || error instanceof ApplicationError) {
+    return ctx.badRequest(error.message);
+  }
+  throw error;
 }
 
 export default {
@@ -40,32 +45,40 @@ export default {
   },
 
   async createOrder(ctx: Context) {
-    const body = (ctx.request.body ?? {}) as Record<string, any>;
-    const authenticatedCustomer = ctx.state.user
-      ? await (getService('customer') as any).findByUserId(ctx.state.user.id)
-      : null;
-    const input = checkoutInput(ctx);
-    const order = await (getService('order') as any).create({
-      ...input,
-      customerId: authenticatedCustomer?.id ?? body.customerId,
-      shippingAddress: body.shippingAddress,
-      billingAddress: body.billingAddress,
-      paymentMethod: body.paymentMethod,
-      metadata: body.metadata,
-      notes: body.notes,
-    });
-    ctx.body = order;
+    try {
+      const body = (ctx.request.body ?? {}) as Record<string, any>;
+      const authenticatedCustomer = ctx.state.user
+        ? await (getService('customer') as any).findByUserId(ctx.state.user.id)
+        : null;
+      const input = checkoutInput(ctx);
+      const order = await (getService('order') as any).create({
+        ...input,
+        customerId: authenticatedCustomer?.id ?? body.customerId,
+        shippingAddress: body.shippingAddress,
+        billingAddress: body.billingAddress,
+        paymentMethod: body.paymentMethod,
+        metadata: body.metadata,
+        notes: body.notes,
+      });
+      ctx.body = order;
+    } catch (error) {
+      return handleCheckoutError(ctx, error);
+    }
   },
 
   async previewCheckout(ctx: Context) {
-    const body = (ctx.request.body ?? {}) as Record<string, any>;
-    const authenticatedCustomer = ctx.state.user
-      ? await (getService('customer') as any).findByUserId(ctx.state.user.id)
-      : null;
-    ctx.body = await (getService('order') as any).preview({
-      ...checkoutInput(ctx),
-      customerId: authenticatedCustomer?.id ?? body.customerId,
-    });
+    try {
+      const body = (ctx.request.body ?? {}) as Record<string, any>;
+      const authenticatedCustomer = ctx.state.user
+        ? await (getService('customer') as any).findByUserId(ctx.state.user.id)
+        : null;
+      ctx.body = await (getService('order') as any).preview({
+        ...checkoutInput(ctx),
+        customerId: authenticatedCustomer?.id ?? body.customerId,
+      });
+    } catch (error) {
+      return handleCheckoutError(ctx, error);
+    }
   },
 
   async createCheckoutOrder(ctx: Context) {
@@ -92,11 +105,18 @@ export default {
     const customer = await resolveAuthenticatedCustomer(ctx);
     if (!customer) return;
     const body = (ctx.request.body ?? {}) as Record<string, any>;
-    if (!body.preferredCurrency) {
+    const preferredCurrency = String(body.preferredCurrency ?? '')
+      .trim()
+      .toUpperCase();
+    if (!preferredCurrency) {
       return ctx.badRequest('preferredCurrency is required.');
     }
+    const tax = getService('tax') as any;
+    if (!tax.isSupportedCurrency(preferredCurrency)) {
+      return ctx.badRequest(`Unsupported currency "${preferredCurrency}".`);
+    }
     ctx.body = await (getService('customer') as any).update(customer.id, {
-      preferredCurrency: body.preferredCurrency,
+      preferredCurrency,
     });
   },
 

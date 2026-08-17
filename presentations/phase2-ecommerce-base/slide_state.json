@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "title": "Phase 2 at a Glance",
+    "created": 1786936750.708,
+    "last_updated": 1786936967.315,
+    "total_slides": 10
+  },
+  "slides": [
+    {
+      "id": "phase2_overview",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "why_extension",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "currency_pipeline",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "exemption_model",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "storefront_api",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "e2e_diagnosis",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "e2e_fixes",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "validation",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "phase3_priorities",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "engineering_principles",
+      "state": "edited",
+      "pageNum": 10
+    }
+  ],
+  "outline": [
+    {
+      "id": "phase2_overview",
+      "title": "Phase 2 at a Glance",
+      "summary": "Native ecommerce-base was extended with multi-currency checkout, BDT support, dynamic exemptions, customer currency support, and a validated Tax Rules admin workflow.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "why_extension",
+      "title": "Why the Extension Was Needed",
+      "summary": "Maps the original generic commerce foundation to the regional checkout and tax gaps addressed in Phase 2.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "currency_pipeline",
+      "title": "Currency and Tax Computation Pipeline",
+      "summary": "Explains USD/BDT configuration, normalized checkout inputs, price conversion, tax rule selection, exemptions, and order metadata persistence.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "exemption_model",
+      "title": "Dynamic Exemption Model",
+      "summary": "Shows the contextual exemption-rule criteria, matching sequence, and auditability of the persisted tax result.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "storefront_api",
+      "title": "Checkout and Customer API Surface",
+      "summary": "Presents the preview, checkout order, customer dashboard, and preferences endpoints as one storefront contract.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "e2e_diagnosis",
+      "title": "E2E Failure Diagnosis",
+      "summary": "Explains why the problem was generated-app plugin composition rather than Tax Rules component rendering.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "e2e_fixes",
+      "title": "E2E Fixes and Integration Chain",
+      "summary": "Tracks the five discovered integration issues and their fixes: app config, permissions, roles, accessibility, and dialog actions.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "validation",
+      "title": "Validation Results",
+      "summary": "Reports the passing unit, TypeScript, build, Playwright, and Git synchronization evidence.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "phase3_priorities",
+      "title": "Phase 3 Priorities",
+      "summary": "Introduces production hardening, cart integration, customer API coverage, exemption operations, and observability as the next execution path.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "engineering_principles",
+      "title": "Engineering Principles and Next Decision",
+      "summary": "Concludes with native Strapi extension principles and the recommended Phase 3 starting sequence.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}
