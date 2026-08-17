@@ -1,0 +1,37 @@
+{
+  "name": "inventel-backend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local Strapi ecommerce backend for the Inventel storefront",
+  "scripts": {
+    "build": "strapi build",
+    "console": "strapi console",
+    "dev": "strapi develop",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi"
+  },
+  "dependencies": {
+    "@strapi/ecommerce-base": "workspace:*",
+    "@strapi/plugin-users-permissions": "workspace:*",
+    "@strapi/strapi": "workspace:*",
+    "better-sqlite3": "12.8.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.30.4",
+    "styled-components": "6.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.41",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=26.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "inventel-backend"
+  }
+}

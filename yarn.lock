@@ -9157,7 +9157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@strapi/ecommerce-base@npm:5.52.0, @strapi/ecommerce-base@workspace:packages/core/ecommerce-base":
+"@strapi/ecommerce-base@npm:5.52.0, @strapi/ecommerce-base@workspace:*, @strapi/ecommerce-base@workspace:packages/core/ecommerce-base":
   version: 0.0.0-use.local
   resolution: "@strapi/ecommerce-base@workspace:packages/core/ecommerce-base"
   dependencies:
@@ -19635,6 +19635,25 @@ __metadata:
   checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
   languageName: node
   linkType: hard
+
+"inventel-backend@workspace:examples/inventel-backend":
+  version: 0.0.0-use.local
+  resolution: "inventel-backend@workspace:examples/inventel-backend"
+  dependencies:
+    "@strapi/ecommerce-base": "workspace:*"
+    "@strapi/plugin-users-permissions": "workspace:*"
+    "@strapi/strapi": "workspace:*"
+    "@types/node": "npm:20.19.41"
+    "@types/react": "npm:^18"
+    "@types/react-dom": "npm:^18"
+    better-sqlite3: "npm:12.8.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
+    react-router-dom: "npm:6.30.4"
+    styled-components: "npm:6.4.1"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
 
 "ip-address@npm:^10.0.1, ip-address@npm:^10.2.0":
   version: 10.4.0
