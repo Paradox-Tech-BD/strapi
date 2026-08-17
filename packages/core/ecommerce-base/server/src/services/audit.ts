@@ -51,15 +51,22 @@ export default ({ strapi }: { strapi: any }) => {
     return record;
   }
 
-  const hasAuditModel = (): boolean => Boolean(strapi.db?.query?.(AUDIT_ENTRY_MODEL_UID));
+  const getAuditQuery = () => {
+    try {
+      return strapi.db?.query?.(AUDIT_ENTRY_MODEL_UID) ?? null;
+    } catch {
+      return null;
+    }
+  };
 
   /**
    * Persist an audit entry, preferring the database model when available
    * and falling back to the in-memory store.
    */
   async function persist(entry: Omit<AuditEntry, 'id' | 'timestamp'>): Promise<AuditEntry> {
-    if (hasAuditModel()) {
-      const dbRecord = await strapi.db.query(AUDIT_ENTRY_MODEL_UID).create({ data: entry });
+    const auditQuery = getAuditQuery();
+    if (auditQuery) {
+      const dbRecord = await auditQuery.create({ data: entry });
       return {
         ...entry,
         id: dbRecord.id,
@@ -85,9 +92,9 @@ export default ({ strapi }: { strapi: any }) => {
     },
 
     async findPage({ page = 1, pageSize = 25 }: { page?: number; pageSize?: number } = {}) {
-      if (hasAuditModel()) {
-        const dbQuery = strapi.db.query(AUDIT_ENTRY_MODEL_UID);
-        return dbQuery.findPage({ offset: (page - 1) * pageSize, limit: pageSize });
+      const auditQuery = getAuditQuery();
+      if (auditQuery) {
+        return auditQuery.findPage({ offset: (page - 1) * pageSize, limit: pageSize });
       }
       const start = (page - 1) * pageSize;
       const results = [...entries].reverse().slice(start, start + pageSize);
@@ -103,16 +110,18 @@ export default ({ strapi }: { strapi: any }) => {
     },
 
     async clear() {
-      if (hasAuditModel()) {
-        await strapi.db.query(AUDIT_ENTRY_MODEL_UID).deleteMany({});
+      const auditQuery = getAuditQuery();
+      if (auditQuery) {
+        await auditQuery.deleteMany({});
       }
       entries = [];
       nextId = 1;
     },
 
     async count() {
-      if (hasAuditModel()) {
-        return strapi.db.query(AUDIT_ENTRY_MODEL_UID).count();
+      const auditQuery = getAuditQuery();
+      if (auditQuery) {
+        return auditQuery.count();
       }
       return entries.length;
     },

@@ -19,7 +19,7 @@ const render = (mountNode: HTMLElement | null, { plugins, ...restArgs }: RenderA
       contentReleases,
       i18n,
       reviewWorkflows,
-      ecommerceBase,
+      'ecommerce-base': ecommerceBase as any,
       ...plugins,
     },
   });

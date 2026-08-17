@@ -12,7 +12,9 @@ export default {
     options: {
       timestamps: true,
     },
-    pluginOptions: {},
+    pluginOptions: {
+      'content-manager': { visible: false },
+    },
     attributes: {
       product: {
         type: 'relation',

@@ -13,7 +13,9 @@ export default {
       draftAndPublish: true,
       timestamps: true,
     },
-    pluginOptions: {},
+    pluginOptions: {
+      'content-manager': { visible: false },
+    },
     attributes: {
       name: {
         type: 'string',

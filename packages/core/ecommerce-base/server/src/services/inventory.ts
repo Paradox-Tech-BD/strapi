@@ -133,10 +133,14 @@ export default ({ strapi }: { strapi: any }) => ({
    * Global low-stock report across all tracked products.
    */
   async lowStockReport() {
-    return strapi.db.query(INVENTORY_ITEM_MODEL_UID).findMany({
-      where: { quantity: { $lte: strapi.db.query?.builder ? undefined : undefined } },
+    const items = await strapi.db.query(INVENTORY_ITEM_MODEL_UID).findMany({
       populate: { product: true },
     });
+
+    return items.filter(
+      (item: { quantity?: number; lowStockThreshold?: number }) =>
+        Number(item.quantity ?? 0) <= Number(item.lowStockThreshold ?? 0)
+    );
   },
 
   /**

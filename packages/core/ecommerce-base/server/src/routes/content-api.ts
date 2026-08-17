@@ -12,11 +12,13 @@ export const routes: Core.RouterConfig = {
       method: 'GET',
       path: '/products',
       handler: 'content-api.listProducts',
+      config: { auth: false },
     },
     {
       method: 'GET',
       path: '/products/:id',
       handler: 'content-api.getProduct',
+      config: { auth: false },
     },
     {
       method: 'POST',
@@ -27,6 +29,7 @@ export const routes: Core.RouterConfig = {
       method: 'POST',
       path: '/checkout/preview',
       handler: 'content-api.previewCheckout',
+      config: { auth: false },
     },
     {
       method: 'POST',

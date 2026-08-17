@@ -13,7 +13,9 @@ const schema: Partial<Struct.CollectionTypeSchema> & {
   options: {
     timestamps: true,
   },
-  pluginOptions: {},
+  pluginOptions: {
+    'content-manager': { visible: false },
+  },
   attributes: {
     name: {
       type: 'string',
