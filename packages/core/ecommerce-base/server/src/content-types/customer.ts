@@ -52,6 +52,10 @@ export default {
         type: 'boolean',
         default: false,
       },
+      preferredCurrency: {
+        type: 'string',
+        default: 'USD',
+      },
       metadata: {
         type: 'json',
       },

@@ -1,6 +1,6 @@
 import taxFactory from '../../services/tax';
 import { createStrapiMock } from '../../helpers/strapi';
-import { TAX_RULE_MODEL_UID } from '../../constants';
+import { TAX_EXEMPTION_RULE_MODEL_UID, TAX_RULE_MODEL_UID } from '../../constants';
 
 describe('ecommerce-base tax service', () => {
   let ctx: ReturnType<typeof createStrapiMock>;
@@ -8,6 +8,15 @@ describe('ecommerce-base tax service', () => {
 
   beforeEach(() => {
     ctx = createStrapiMock();
+    ctx.strapi.config.get.mockImplementation((key: string) =>
+      key === 'plugin::ecommerce-base.tax'
+        ? {
+            baseCurrency: 'USD',
+            supportedCurrencies: ['USD', 'BDT'],
+            exchangeRates: { USD: 1, BDT: 120 },
+          }
+        : null
+    );
     tax = taxFactory({ strapi: ctx.strapi });
     (ctx.db.query as any).store[TAX_RULE_MODEL_UID] = [
       {
@@ -77,6 +86,67 @@ describe('ecommerce-base tax service', () => {
       effectiveRate: 0,
       rules: [],
     });
+  });
+
+  it('converts USD amounts into BDT using the configured deterministic rate', () => {
+    expect(tax.convert(10, 'USD', 'BDT')).toEqual({
+      amount: 1200,
+      rate: 120,
+      from: 'USD',
+      to: 'BDT',
+    });
+  });
+
+  it('applies a matching customer exemption rule to a BDT checkout', async () => {
+    (ctx.db.query as any).store[TAX_EXEMPTION_RULE_MODEL_UID] = [
+      {
+        id: 10,
+        name: 'BD reseller exemption',
+        region: 'BD',
+        currency: 'BDT',
+        customerTags: ['reseller'],
+        exemptionPercentage: 100,
+        active: true,
+      },
+    ];
+
+    const result = (await tax.compute(1200, 'BD', {
+      currency: 'BDT',
+      customer: { id: 7, tags: ['reseller'] },
+      now: '2026-08-17T00:00:00.000Z',
+    })) as any;
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        currency: 'BDT',
+        taxAmount: 0,
+        grossTaxAmount: 180,
+        exemptAmount: 180,
+        exemptionPercentage: 100,
+        exemption: expect.objectContaining({ id: 10 }),
+      })
+    );
+  });
+
+  it('does not apply a customer-tag exemption when the tag does not match', async () => {
+    (ctx.db.query as any).store[TAX_EXEMPTION_RULE_MODEL_UID] = [
+      {
+        id: 11,
+        name: 'BD reseller exemption',
+        region: 'BD',
+        customerTags: ['reseller'],
+        exemptionPercentage: 100,
+        active: true,
+      },
+    ];
+
+    const result = (await tax.compute(100, 'BD', {
+      currency: 'USD',
+      customer: { id: 7, tags: ['consumer'] },
+    })) as any;
+
+    expect(result.exemption).toBeNull();
+    expect(result.taxAmount).toBe(15);
   });
 
   it('creates a new rule through db.query', async () => {

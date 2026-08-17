@@ -23,6 +23,9 @@ const schema: Partial<Struct.CollectionTypeSchema> & {
       type: 'string',
       required: true,
     },
+    currency: {
+      type: 'string',
+    },
     rate: {
       type: 'decimal',
       required: true,

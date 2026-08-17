@@ -1,6 +1,7 @@
 import { errors } from '@strapi/utils';
 import {
   ORDER_MODEL_UID,
+  CUSTOMER_MODEL_UID,
   ORDER_LINE_MODEL_UID,
   PRODUCT_MODEL_UID,
   WEBHOOK_EVENTS,
@@ -86,6 +87,119 @@ export default ({ strapi }: { strapi: any }) => ({
   },
 
   /**
+   * Preview checkout totals without reserving inventory, consuming a promotion,
+   * or creating an order record.
+   */
+  async preview({
+    customerId,
+    items,
+    promotionCode,
+    shippingCost,
+    region,
+    currency,
+    exemptionCode,
+  }: {
+    customerId?: number | string;
+    items: {
+      productId: number | string;
+      quantity: number;
+      unitPrice?: number;
+      currency?: string;
+    }[];
+    promotionCode?: string;
+    shippingCost?: number;
+    region?: string;
+    currency?: string;
+    exemptionCode?: string;
+  }) {
+    if (!items.length) throw new ValidationError('An order needs at least one line item.');
+    const productIds = items.map((item) => Number(item.productId));
+    const products = (await strapi.db.query(PRODUCT_MODEL_UID).findMany({
+      where: { id: { $in: productIds } },
+    })) as {
+      id: number;
+      name: string;
+      sku?: string;
+      price: number;
+      currency?: string;
+    }[];
+    if (products.length !== productIds.length) {
+      throw new ValidationError('One or more products could not be found.');
+    }
+
+    const productById = new Map(products.map((product) => [product.id, product]));
+    const taxService = getService('tax') as {
+      convert?: (
+        amount: number,
+        fromCurrency: string,
+        toCurrency: string
+      ) => { amount: number; rate: number };
+    };
+    const targetCurrency = String(currency ?? 'USD').toUpperCase();
+    const lines = items.map((item) => {
+      const product = productById.get(Number(item.productId));
+      if (!product) throw new ValidationError('One or more products could not be found.');
+      const sourceCurrency = String(item.currency ?? product.currency ?? 'USD').toUpperCase();
+      const sourcePrice = item.unitPrice ?? product.price;
+      const conversion =
+        sourceCurrency !== targetCurrency && taxService.convert
+          ? taxService.convert(Number(sourcePrice), sourceCurrency, targetCurrency)
+          : { amount: Number(sourcePrice), rate: 1 };
+      return {
+        productId: product.id,
+        name: product.name,
+        quantity: item.quantity,
+        unitPrice: conversion.amount,
+        totalPrice: roundMoney(conversion.amount * item.quantity),
+        sourceCurrency,
+        conversionRate: conversion.rate,
+      };
+    });
+
+    let promotion = null;
+    if (promotionCode) {
+      promotion = await (getService('promotion') as any).findByCode(promotionCode, {
+        orderTotal: roundMoney(lines.reduce((sum, line) => sum + line.totalPrice, 0)),
+      });
+    }
+    const totals = await this.computeTotals({
+      lines,
+      promotion,
+      shippingCost,
+      currency: targetCurrency,
+      taxRate: 0,
+    });
+    const customerService = getService('customer') as {
+      findOne?: (id: number | string) => Promise<any>;
+    };
+    const customer =
+      customerId && customerService.findOne ? await customerService.findOne(customerId) : null;
+    const taxResult = await (getService('tax') as any).compute(
+      totals.subtotal - totals.discountAmount,
+      region ?? 'default',
+      { currency: targetCurrency, customerId, customer, exemptionCode }
+    );
+    const taxAmount = roundMoney(Number(taxResult.taxAmount));
+    return {
+      ...totals,
+      taxAmount,
+      total: roundMoney(totals.subtotal - totals.discountAmount + taxAmount + (shippingCost ?? 0)),
+      lines,
+      tax: {
+        region: region ?? 'default',
+        currency: targetCurrency,
+        taxAmount,
+        grossTaxAmount: taxResult.grossTaxAmount ?? taxAmount,
+        exemptAmount: taxResult.exemptAmount ?? 0,
+        exemptionPercentage: taxResult.exemptionPercentage ?? 0,
+        exemption: taxResult.exemption ?? null,
+        effectiveRate: taxResult.effectiveRate,
+        rules: taxResult.rules,
+      },
+    };
+  },
+
+  /**
    * Create an order from cart items or raw line input. Reserves inventory and
    * emits the order.created webhook event.
    */
@@ -101,9 +215,16 @@ export default ({ strapi }: { strapi: any }) => ({
     region,
     metadata,
     notes,
+    currency,
+    exemptionCode,
   }: {
     customerId?: number | string;
-    items: { productId: number | string; quantity: number; unitPrice?: number }[];
+    items: {
+      productId: number | string;
+      quantity: number;
+      unitPrice?: number;
+      currency?: string;
+    }[];
     promotionCode?: string;
     shippingAddress?: unknown;
     billingAddress?: unknown;
@@ -111,6 +232,8 @@ export default ({ strapi }: { strapi: any }) => ({
     shippingCost?: number;
     taxRate?: number;
     region?: string;
+    currency?: string;
+    exemptionCode?: string;
     metadata?: Record<string, unknown>;
     notes?: string;
   }) {
@@ -120,16 +243,37 @@ export default ({ strapi }: { strapi: any }) => ({
     const productIds = items.map((i) => Number(i.productId));
     const products = (await strapi.db.query(PRODUCT_MODEL_UID).findMany({
       where: { id: { $in: productIds } },
-    })) as { id: number; name: string; sku?: string; price: number; stockTracking?: boolean }[];
+    })) as {
+      id: number;
+      name: string;
+      sku?: string;
+      price: number;
+      currency?: string;
+      stockTracking?: boolean;
+    }[];
     if (products.length !== productIds.length) {
       throw new ValidationError('One or more products could not be found.');
     }
     const productById = new Map(products.map((p) => [p.id, p]));
+    const taxService = getService('tax') as {
+      convert?: (
+        amount: number,
+        fromCurrency: string,
+        toCurrency: string
+      ) => { amount: number; rate: number };
+    };
+    const targetCurrency = String(currency ?? 'USD').toUpperCase();
 
     const lines = items.map((item) => {
       const product = productById.get(Number(item.productId));
       if (!product) throw new ValidationError('One or more products could not be found.');
-      const unitPrice = item.unitPrice ?? product.price;
+      const sourceCurrency = String(item.currency ?? product.currency ?? 'USD').toUpperCase();
+      const sourcePrice = item.unitPrice ?? product.price;
+      const conversion =
+        sourceCurrency !== targetCurrency && taxService.convert
+          ? taxService.convert(Number(sourcePrice), sourceCurrency, targetCurrency)
+          : { amount: Number(sourcePrice), rate: 1 };
+      const unitPrice = conversion.amount;
       return {
         product: product.id,
         quantity: item.quantity,
@@ -139,7 +283,11 @@ export default ({ strapi }: { strapi: any }) => ({
         productSnapshot: {
           name: product.name,
           sku: product.sku,
-          priceAtOrder: product.price,
+          priceAtOrder: unitPrice,
+          sourcePrice: Number(sourcePrice),
+          sourceCurrency,
+          currency: targetCurrency,
+          conversionRate: conversion.rate,
         },
       };
     });
@@ -169,12 +317,31 @@ export default ({ strapi }: { strapi: any }) => ({
       lines,
       promotion,
       shippingCost,
+      currency: targetCurrency,
       taxRate: 0,
     });
-    const taxResult = await getService('tax').compute(
-      totals.subtotal - totals.discountAmount,
-      region ?? 'default'
-    );
+    const customerService = getService('customer') as {
+      findOne?: (id: number | string) => Promise<any>;
+    };
+    const customer =
+      customerId && customerService.findOne ? await customerService.findOne(customerId) : null;
+    const taxInput = {
+      currency: targetCurrency,
+      customerId,
+      customer,
+      exemptionCode,
+    };
+    const taxResult =
+      currency || exemptionCode || customerId
+        ? await (getService('tax') as any).compute(
+            totals.subtotal - totals.discountAmount,
+            region ?? 'default',
+            taxInput
+          )
+        : await (getService('tax') as any).compute(
+            totals.subtotal - totals.discountAmount,
+            region ?? 'default'
+          );
     const taxAmount = roundMoney(Number(taxResult.taxAmount));
     const finalTotals = {
       ...totals,
@@ -198,7 +365,12 @@ export default ({ strapi }: { strapi: any }) => ({
           ...(metadata ?? {}),
           tax: {
             region: region ?? 'default',
+            currency: targetCurrency,
             taxAmount,
+            grossTaxAmount: taxResult.grossTaxAmount ?? taxAmount,
+            exemptAmount: taxResult.exemptAmount ?? 0,
+            exemptionPercentage: taxResult.exemptionPercentage ?? 0,
+            exemption: taxResult.exemption ?? null,
             effectiveRate: taxResult.effectiveRate,
             rules: taxResult.rules,
           },

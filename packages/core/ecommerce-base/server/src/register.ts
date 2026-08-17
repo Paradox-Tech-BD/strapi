@@ -1,4 +1,4 @@
-import { CONDITIONS } from './constants';
+import { ACTIONS, CONDITIONS } from './constants';
 
 type User = any;
 type Role = any;
@@ -135,8 +135,20 @@ export const conditions = [
 ];
 
 export async function register({ strapi }: { strapi: any }) {
-  // Register PBAC conditions on the admin permission engine.
+  // Register plugin actions before the admin UI evaluates menu-link permissions.
   const permissionService = strapi.service('admin::permission');
+  if (permissionService?.actionProvider) {
+    const actionNames = new Set(Object.values(ACTIONS));
+    await permissionService.actionProvider.registerMany(
+      Array.from(actionNames).map((action) => ({
+        section: 'plugins',
+        displayName: action.split('.').at(-1),
+        uid: action.replace('plugin::ecommerce-base.', ''),
+        pluginName: 'ecommerce-base',
+      }))
+    );
+  }
+  // Register PBAC conditions on the admin permission engine.
   if (permissionService?.conditionProvider) {
     for (const condition of conditions) {
       await permissionService.conditionProvider.register(condition);

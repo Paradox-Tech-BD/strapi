@@ -54,6 +54,10 @@ describe('ecommerce-base order service', () => {
       recordOrder: jest.fn(async () => ({})),
     };
     taxMock = {
+      convert: jest.fn((amount: number, from: string, to: string) => ({
+        amount: from === 'USD' && to === 'BDT' ? amount * 120 : amount,
+        rate: from === 'USD' && to === 'BDT' ? 120 : 1,
+      })),
       compute: jest.fn(async () => ({ taxAmount: 0, effectiveRate: 0, rules: [] })),
     };
     mountServices(ctx, {
@@ -102,6 +106,23 @@ describe('ecommerce-base order service', () => {
       expect(Number(created.subtotal)).toBe(45.5);
       expect(Number(created.total)).toBe(50.5);
       expect(created.currency).toBe('USD');
+    });
+
+    it('converts product prices into BDT during checkout', async () => {
+      const created = await order.create({
+        items: [{ productId: 1, quantity: 2 }],
+        currency: 'BDT',
+        region: 'BD',
+      });
+
+      expect(Number(created.subtotal)).toBe(2400);
+      expect(created.currency).toBe('BDT');
+      expect(created.metadata).toEqual(
+        expect.objectContaining({
+          tax: expect.objectContaining({ currency: 'BDT' }),
+        })
+      );
+      expect(taxMock.convert).toHaveBeenCalledWith(10, 'USD', 'BDT');
     });
 
     it('rejects empty orders', async () => {

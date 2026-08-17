@@ -20,7 +20,15 @@ export default ({ strapi: strapiRef }: { strapi: any }) => {
   }
 
   return {
-    async findActive({ customerId, sessionId }: { customerId?: number; sessionId?: string }) {
+    async findActive({
+      customerId,
+      sessionId,
+      currency,
+    }: {
+      customerId?: number;
+      sessionId?: string;
+      currency?: string;
+    }) {
       let cart;
       if (customerId) {
         cart = await strapi.db.query(CART_MODEL_UID).findOne({
@@ -40,6 +48,7 @@ export default ({ strapi: strapiRef }: { strapi: any }) => {
             customer: customerId ?? null,
             sessionId: sessionId ?? null,
             status: 'active',
+            ...(currency ? { currency: String(currency).toUpperCase() } : {}),
           },
         });
       }
@@ -76,8 +85,24 @@ export default ({ strapi: strapiRef }: { strapi: any }) => {
           data: { quantity: existing.quantity + quantity },
         });
       }
+      const cart = await strapi.db.query(CART_MODEL_UID).findOne({ where: { id: cartId } });
+      const sourceCurrency = String(product.currency ?? 'USD').toUpperCase();
+      const targetCurrency = String(cart?.currency ?? sourceCurrency).toUpperCase();
+      const tax = getService('tax') as {
+        convert?: (amount: number, from: string, to: string) => { amount: number };
+      };
+      const convertedPrice =
+        sourceCurrency === targetCurrency || !tax.convert
+          ? Number(product.price)
+          : tax.convert(Number(product.price), sourceCurrency, targetCurrency).amount;
       const item = await strapi.db.query(CART_ITEM_MODEL_UID).create({
-        data: { cart: cartId, product: productId, quantity, unitPrice: product.price },
+        data: {
+          cart: cartId,
+          product: productId,
+          quantity,
+          unitPrice: convertedPrice,
+          currency: targetCurrency,
+        },
       });
       await recalcSubtotal(cartId);
       return item;
@@ -135,7 +160,8 @@ export default ({ strapi: strapiRef }: { strapi: any }) => {
 
       const order = await (getService('order') as any).create({
         customerId: cart.customer,
-        items,
+        items: items.map((item) => ({ ...item, currency: cart.currency ?? orderInput.currency })),
+        currency: cart.currency ?? orderInput.currency,
         ...orderInput,
       });
 

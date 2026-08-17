@@ -25,6 +25,28 @@ export const routes: Core.RouterConfig = {
     },
     {
       method: 'POST',
+      path: '/checkout/preview',
+      handler: 'content-api.previewCheckout',
+    },
+    {
+      method: 'POST',
+      path: '/checkout/orders',
+      handler: 'content-api.createCheckoutOrder',
+    },
+    {
+      method: 'GET',
+      path: '/customer/dashboard',
+      handler: 'content-api.getCustomerDashboard',
+      config: { auth: { scope: ['authenticated'] } },
+    },
+    {
+      method: 'PUT',
+      path: '/customer/preferences',
+      handler: 'content-api.updateCustomerPreferences',
+      config: { auth: { scope: ['authenticated'] } },
+    },
+    {
+      method: 'POST',
       path: '/promotions/apply',
       handler: 'content-api.applyPromotion',
     },

@@ -13,6 +13,7 @@ export const CART_MODEL_UID = 'plugin::ecommerce-base.cart';
 export const CART_ITEM_MODEL_UID = 'plugin::ecommerce-base.cart-item';
 export const PROMOTION_MODEL_UID = 'plugin::ecommerce-base.promotion';
 export const TAX_RULE_MODEL_UID = 'plugin::ecommerce-base.tax-rule';
+export const TAX_EXEMPTION_RULE_MODEL_UID = 'plugin::ecommerce-base.tax-exemption-rule';
 
 /**
  * Admin section actions (plugin::ecommerce-base.*)

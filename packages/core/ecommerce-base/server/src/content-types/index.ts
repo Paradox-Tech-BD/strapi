@@ -7,6 +7,7 @@ import cart from './cart';
 import cartItem from './cart-item';
 import promotion from './promotion';
 import taxRule from './tax-rule';
+import taxExemptionRule from './tax-exemption-rule';
 
 export const contentTypes = {
   product,
@@ -18,4 +19,5 @@ export const contentTypes = {
   'cart-item': cartItem,
   promotion,
   'tax-rule': taxRule,
+  'tax-exemption-rule': taxExemptionRule,
 };

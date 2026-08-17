@@ -34,6 +34,10 @@ export default {
         type: 'decimal',
         required: true,
       },
+      currency: {
+        type: 'string',
+        default: 'USD',
+      },
     },
   },
 };

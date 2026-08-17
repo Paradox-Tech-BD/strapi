@@ -33,6 +33,7 @@ type TaxRule = {
   id: number | string;
   name: string;
   region: string;
+  currency?: string;
   rate: number | string;
   type: 'inclusive' | 'exclusive';
   active: boolean;
@@ -42,6 +43,7 @@ type TaxRule = {
 type TaxRuleForm = {
   name: string;
   region: string;
+  currency: string;
   rate: string;
   type: TaxRule['type'];
   appliesTo: TaxRule['appliesTo'];
@@ -60,6 +62,7 @@ type TaxRuleResponse = {
 const emptyForm: TaxRuleForm = {
   name: '',
   region: '',
+  currency: '',
   rate: '',
   type: 'exclusive',
   appliesTo: 'all',
@@ -98,6 +101,7 @@ export const TaxRulesPage = () => {
     async (input: TaxRuleForm) => {
       const response = await post<TaxRule>('/ecommerce-base/tax-rules', {
         ...input,
+        currency: input.currency.trim() || undefined,
         rate: Number(input.rate),
       });
       return response.data;
@@ -185,6 +189,11 @@ export const TaxRulesPage = () => {
       sortable: true,
     },
     {
+      name: 'currency',
+      label: formatMessage({ id: getTrad('tax-rules.currency'), defaultMessage: 'Currency' }),
+      sortable: true,
+    },
+    {
       name: 'rate',
       label: formatMessage({ id: getTrad('tax-rules.rate'), defaultMessage: 'Rate' }),
       sortable: true,
@@ -245,6 +254,7 @@ export const TaxRulesPage = () => {
                     <Typography fontWeight="bold">{rule.name}</Typography>
                   </Table.Cell>
                   <Table.Cell>{rule.region}</Table.Cell>
+                  <Table.Cell>{rule.currency ?? 'All'}</Table.Cell>
                   <Table.Cell>{`${(Number(rule.rate) * 100).toFixed(2)}%`}</Table.Cell>
                   <Table.Cell>{rule.type}</Table.Cell>
                   <Table.Cell>{rule.appliesTo}</Table.Cell>
@@ -327,6 +337,17 @@ export const TaxRulesPage = () => {
                   required
                 />
               </Field.Root>
+              <Field.Root name="tax-rule-currency">
+                <Field.Label>
+                  {formatMessage({ id: getTrad('tax-rules.currency'), defaultMessage: 'Currency' })}
+                </Field.Label>
+                <TextInput
+                  id="tax-rule-currency"
+                  value={form.currency}
+                  onChange={updateField('currency')}
+                  placeholder="USD or BDT"
+                />
+              </Field.Root>
               <Field.Root name="tax-rule-rate" required>
                 <Field.Label>
                   {formatMessage({ id: getTrad('tax-rules.rate'), defaultMessage: 'Rate' })}
@@ -379,11 +400,13 @@ export const TaxRulesPage = () => {
             </Dialog.Body>
             <Dialog.Footer padding={4} justifyContent="flex-end" gap={2}>
               <Dialog.Cancel>
-                {formatMessage({ id: getTrad('tax-rules.cancel'), defaultMessage: 'Cancel' })}
+                <Button variant="tertiary">
+                  {formatMessage({ id: getTrad('tax-rules.cancel'), defaultMessage: 'Cancel' })}
+                </Button>
               </Dialog.Cancel>
-              <Dialog.Action type="submit" disabled={createMutation.isLoading}>
+              <Button type="submit" disabled={createMutation.isLoading}>
                 {formatMessage({ id: getTrad('tax-rules.save'), defaultMessage: 'Save tax rule' })}
-              </Dialog.Action>
+              </Button>
             </Dialog.Footer>
           </form>
         </Dialog.Content>
@@ -408,14 +431,16 @@ export const TaxRulesPage = () => {
           </Dialog.Description>
           <Dialog.Footer padding={4} justifyContent="flex-end" gap={2}>
             <Dialog.Cancel>
-              {formatMessage({ id: getTrad('tax-rules.cancel'), defaultMessage: 'Cancel' })}
+              <Button variant="tertiary">
+                {formatMessage({ id: getTrad('tax-rules.cancel'), defaultMessage: 'Cancel' })}
+              </Button>
             </Dialog.Cancel>
-            <Dialog.Action
+            <Button
               disabled={deleteMutation.isLoading}
               onClick={() => ruleToDelete && deleteMutation.mutate(ruleToDelete.id)}
             >
               {formatMessage({ id: getTrad('tax-rules.delete'), defaultMessage: 'Delete' })}
-            </Dialog.Action>
+            </Button>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Root>

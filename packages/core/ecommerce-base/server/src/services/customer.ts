@@ -1,5 +1,6 @@
 import { errors } from '@strapi/utils';
-import { CUSTOMER_MODEL_UID, WEBHOOK_EVENTS } from '../constants';
+import { CUSTOMER_MODEL_UID, ORDER_MODEL_UID, WEBHOOK_EVENTS } from '../constants';
+import { getService } from '../utils';
 
 const { ApplicationError, ValidationError } = errors;
 
@@ -24,6 +25,13 @@ export default ({ strapi }: { strapi: any }) => ({
     return strapi.db.query(CUSTOMER_MODEL_UID).findOne({ where: { email } });
   },
 
+  async findByUserId(userId: number | string) {
+    return strapi.db.query(CUSTOMER_MODEL_UID).findOne({
+      where: { user: userId },
+      populate: { user: true },
+    });
+  },
+
   async create(data: {
     firstName: string;
     lastName?: string;
@@ -32,6 +40,7 @@ export default ({ strapi }: { strapi: any }) => ({
     addresses?: unknown;
     metadata?: unknown;
     marketingOptIn?: boolean;
+    preferredCurrency?: string;
   }) {
     if (!data.firstName?.trim()) {
       throw new ValidationError('Customer requires a firstName.');
@@ -56,6 +65,13 @@ export default ({ strapi }: { strapi: any }) => ({
     if (data.email !== undefined && !EMAIL_REGEX.test(String(data.email))) {
       throw new ValidationError('A valid email address is required.');
     }
+    if (data.preferredCurrency !== undefined) {
+      const tax = getService('tax') as { isSupportedCurrency?: (currency: unknown) => boolean };
+      if (tax.isSupportedCurrency && !tax.isSupportedCurrency(data.preferredCurrency)) {
+        throw new ValidationError(`Unsupported currency "${data.preferredCurrency}".`);
+      }
+      data.preferredCurrency = String(data.preferredCurrency).toUpperCase();
+    }
     const customer = await strapi.db.query(CUSTOMER_MODEL_UID).update({ where: { id }, data });
     const emit = strapi.config?.get?.('plugin::ecommerce-base.webhooks.emitEvents');
     if (emit !== false) {
@@ -74,6 +90,26 @@ export default ({ strapi }: { strapi: any }) => ({
    * Called by the order service after a successful order creation to keep the
    * customer's lifetime value and order counters in sync.
    */
+  async dashboard(customerId: number | string, currency?: string) {
+    const customer = await this.findOne(customerId);
+    const orders = await strapi.db.query(ORDER_MODEL_UID).findMany({
+      where: { customer: customerId },
+      populate: { lines: true },
+      orderBy: { createdAt: 'desc' },
+      limit: 20,
+    });
+    return {
+      customer,
+      currency: currency ?? customer.preferredCurrency ?? 'USD',
+      summary: {
+        lifetimeValue: Number(customer.lifetimeValue ?? 0),
+        orderCount: Number(customer.orderCount ?? 0),
+        lastOrderAt: customer.lastOrderAt ?? null,
+      },
+      orders,
+    };
+  },
+
   async recordOrder(customerId: number | string, orderTotal: number) {
     const customer = await this.findOne(customerId);
     return strapi.db.query(CUSTOMER_MODEL_UID).update({

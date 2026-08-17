@@ -56,6 +56,7 @@
   "tax-rules.createDescription": "Define a regional tax rule for new orders.",
   "tax-rules.name": "Name",
   "tax-rules.region": "Region",
+  "tax-rules.currency": "Currency",
   "tax-rules.rate": "Rate",
   "tax-rules.type": "Type",
   "tax-rules.appliesTo": "Applies To",

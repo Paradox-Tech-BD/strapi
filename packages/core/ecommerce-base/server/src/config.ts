@@ -32,5 +32,16 @@ export const config = {
     carts: {
       expirationDays: 30,
     },
+    /**
+     * Deterministic tax and currency configuration. Rates express one unit
+     * of the base currency in each supported currency; applications should
+     * update them from their own FX source rather than relying on the plugin
+     * to fetch live rates.
+     */
+    tax: {
+      baseCurrency: 'USD',
+      supportedCurrencies: ['USD', 'BDT'],
+      exchangeRates: { USD: 1, BDT: 120 },
+    },
   },
 };

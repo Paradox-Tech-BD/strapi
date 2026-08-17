@@ -1,95 +1,6 @@
 import type { Core } from '@strapi/types';
-import { ACTIONS, STAFF_ROLES, WEBHOOK_EVENTS } from './constants';
+import { STAFF_ROLES, WEBHOOK_EVENTS } from './constants';
 import { createPayPalGateway, createStripeGateway } from './gateways';
-
-const ADMIN_ACTIONS = [
-  {
-    uid: 'catalog.read',
-    displayName: 'Read the catalog',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'catalog',
-  },
-  {
-    uid: 'catalog.manage',
-    displayName: 'Manage the catalog',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'catalog',
-    subCategory: 'products',
-  },
-  {
-    uid: 'catalog.publish',
-    displayName: 'Publish products',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'catalog',
-    subCategory: 'products',
-  },
-  {
-    uid: 'orders.read',
-    displayName: 'Read orders',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'orders',
-  },
-  {
-    uid: 'orders.manage',
-    displayName: 'Manage orders',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'orders',
-  },
-  {
-    uid: 'orders.cancel',
-    displayName: 'Cancel orders',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'orders',
-  },
-  {
-    uid: 'inventory.read',
-    displayName: 'Read inventory',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'inventory',
-  },
-  {
-    uid: 'inventory.adjust',
-    displayName: 'Adjust inventory',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'inventory',
-  },
-  {
-    uid: 'customers.read',
-    displayName: 'Read customers',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'customers',
-  },
-  {
-    uid: 'customers.manage',
-    displayName: 'Manage customers',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'customers',
-  },
-  {
-    uid: 'finance.read',
-    displayName: 'Read financial data',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'finance',
-  },
-  {
-    uid: 'audit.read',
-    displayName: 'Read the audit log',
-    pluginName: 'ecommerce-base',
-    section: 'plugins',
-    category: 'audit',
-  },
-];
 
 /**
  * Register custom webhook events so they can be forwarded to
@@ -104,43 +15,33 @@ const registerWebhookEvents = () => {
 };
 
 /**
- * Register our admin section actions with the admin permission engine.
- */
-const registerPermissionActions = async () => {
-  await strapi.service('admin::permission').actionProvider.registerMany(ADMIN_ACTIONS);
-};
-
-/**
  * Seed the staff roles shipped with the fork. Idempotent: existing roles are
  * reused, only their action set is synced when the seed runs.
  */
 const seedStaffRoles = async () => {
   const roleService = strapi.service('admin::role');
-  if (!roleService) return;
+  if (!roleService?.findAllWithUsersCount || !roleService.create) return;
+
+  const existingRoles = (await roleService.findAllWithUsersCount({})) as any[];
 
   for (const role of STAFF_ROLES) {
-    let existing = (await roleService.findAllWithCount()) as any;
-    let dbRole = existing[0]?.find?.((r: any) => r.name === role.name || r.code === role.code);
-    if (Array.isArray(existing) && existing[0] && !dbRole) {
-      dbRole = existing[0].find?.((r: any) => r.name === role.name || r.code === role.code);
-    }
+    let dbRole = existingRoles.find(
+      (candidate) => candidate.name === role.name || candidate.code === role.code
+    );
 
     if (!dbRole) {
-      const [created] = await roleService.createWithPermission({
+      dbRole = await roleService.create({
         name: role.name,
         description: role.description,
         code: role.code,
       });
-      dbRole = created;
+      existingRoles.push(dbRole);
     }
 
     // Sync the permission set for the seeded role (best-effort; ignore if any
     // registered action is missing due to version drift).
     try {
-      const permissions = role.actions.map((action) => ({
-        action,
-        role: dbRole.id,
-      }));
+      const permissions = role.actions.map((action) => ({ action }));
       await roleService.assignPermissions(dbRole.id, permissions);
     } catch (err) {
       strapi.log?.warn?.(
@@ -151,9 +52,9 @@ const seedStaffRoles = async () => {
 };
 
 export async function bootstrap({ strapi }: { strapi: Core.Strapi }) {
-  // 1. Register allowed webhook events + permission actions.
+  // 1. Register allowed webhook events. Permission actions are registered in
+  // the plugin register lifecycle before bootstrap runs.
   registerWebhookEvents();
-  await registerPermissionActions();
 
   // 2. Seed default staff roles (Catalog Manager, Order Manager, …).
   await seedStaffRoles();
